@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-
+#include "timer.h"
 bool iterate = false;
 int counter = 0;
 int duration;
@@ -42,37 +42,51 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
   }
   *TIMER1_IFC = 1; 
 }
+void pin_interrupt(uint32_t i, bool even) {
 
-void GPIO_HANDLER()
-{
-uint32_t a = ( *GPIO_PC_DIN & (1 << 0));
-uint32_t b = ( *GPIO_PC_DIN & (1 << 1));
-
-  if (a) {
-	*GPIO_PA_DOUT &= ~(1 << 8);
-        timeroff();
-  }
-  if (b) { 
-	*GPIO_PA_DOUT |= (1 << 8);
-	timeron();
-  } 
+if (even) {
+switch (i) {
+	case 0:
+		*GPIO_PA_DOUT &= ~(1 << 8);
+		break;
+	case 1:
+		timeroff();
+		break;
+	default:
+		*GPIO_PA_DOUT &= ~(7 << 8);
+	}
+} else {
+switch(i) {
+	case 0:
+		*GPIO_PA_DOUT |= (1 << 8);
+		break;
+	case 1:
+		timeron();
+		break;
+	default:
+		*GPIO_PA_DOUT |= (7 << 8);
+	}
+   } 
 	
-  *GPIO_IFC = 1;
+}
 
+void GPIO_HANDLER(bool even) {
+	for (int i; i < 8; i++) {
+		if ( *GPIO_IF & (1 << (i))) {
+			pin_interrupt(i, even);
+			*GPIO_IFC = (1 << i);
+		}
+	}
 }
 
 /* GPIO even pin interrupt handler */
 void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler() 
 {
-    /* TODO handle button pressed event, remember to clear pending interrupt */
-  //*GPIO_IFC = 0xffff;
-  GPIO_HANDLER();
+  GPIO_HANDLER(1);
 }
 
 /* GPIO odd pin interrupt handler */
 void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler() 
 {
-    /* TODO handle button pressed event, remember to clear pending interrupt */
-  //*GPIO_IFC = 0xff;
-  GPIO_HANDLER();
+  GPIO_HANDLER(0);
 }

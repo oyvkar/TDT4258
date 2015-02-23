@@ -10,6 +10,9 @@
   registers are 16 bits.
 */
 /* The period between sound samples, in clock cycles */
+
+// 16 bit, max value 65535
+// 44100 samples/sec gives 292
 #define   SAMPLE_PERIOD   14000
 
 /* Declaration of peripheral setup functions */
