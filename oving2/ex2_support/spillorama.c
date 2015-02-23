@@ -10,7 +10,7 @@ const uint32_l DL = length(danger);
 
 volatile uint32_l counter = 0;
 
-void danger(){
+void dangerf(){
 	if(counter == (DL-1)){
 		counter == 0
 		timeroff();
@@ -23,7 +23,7 @@ void danger(){
 	}	
 }
 
-void explosion(){
+void explosionf(){
 	if(counter == (EL-1)){
 		counter == 0
 		timeroff();
@@ -39,7 +39,7 @@ void explosion(){
 
 
 
-void beep(){
+void beepf(){
 	if(counter == (BL-1)){
 		counter == 0
 		timeroff();
