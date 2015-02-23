@@ -1,7 +1,8 @@
 //File for playing of 8bit sounds.
-#include Danger1.h
-#include Beep1.h
-#include Explosion1.h
+#include "efm32gg.h"
+#include "danger1.h"
+#include "beep1.h"
+#include "explosion1.h"
 
 const uint32_l BL = length(beep);
 const uint32_l EL = length(explosion);
@@ -18,7 +19,7 @@ void dangerf(){
 	}
 	else{
 		DAC0_CH0DATA = danger(counter);
-		DAC0_DC1DATA = danger(counter);
+		DAC1_CH1DATA = danger(counter);
 		counter++;
 	}	
 }
@@ -31,7 +32,7 @@ void explosionf(){
 	}
 	else{
 		DAC0_CH0DATA = explosion(counter);
-		DAC0_DC1DATA = explosion(counter);
+		DAC1_CH1DATA = explosion(counter);
 		counter++;
 	}	
 }
@@ -47,7 +48,7 @@ void beepf(){
 	}
 	else{
 		DAC0_CH0DATA = beep(counter);
-		DAC0_DC1DATA = beep(counter);
+		DAC1_CH1DATA = beep(counter);
 		counter++;
 	}	
 }
