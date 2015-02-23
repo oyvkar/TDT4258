@@ -12,8 +12,7 @@
 /* The period between sound samples, in clock cycles */
 
 // 16 bit, max value 65535
-// 44100 samples/sec gives 292
-#define   SAMPLE_PERIOD   14000
+#define   SAMPLE_PERIOD   317
 
 /* Declaration of peripheral setup functions */
 void setupTimer(uint32_t period);
@@ -34,7 +33,7 @@ int main(void)
   /* TODO for higher energy efficiency, sleep while waiting for interrupts
      instead of infinite loop for busy-waiting
   */
-  
+  timeron(); 
   *SCR = 6; // Setup deep sleep
   __asm("WFI");
   return 0;
