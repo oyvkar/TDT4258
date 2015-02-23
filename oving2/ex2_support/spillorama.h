@@ -1,7 +1,7 @@
 //File for playing of 8bit sounds.
-#include "Danger1.h"
-#include "Beep1.h"
-#include "Explosion1.h"
+#include "danger1.h"
+#include "beep1.h"
+#include "explosion1.h"
 
 const uint32_l BL = length(beep);
 const uint32_l EL = length(explosion);
