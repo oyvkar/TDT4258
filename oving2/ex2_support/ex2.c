@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "timer.h"
 #include "efm32gg.h"
 
 /* 
@@ -12,10 +12,9 @@
 /* The period between sound samples, in clock cycles */
 
 // 16 bit, max value 65535
-#define   SAMPLE_PERIOD   317
+#define   SAMPLE_PERIOD   317 //Unused
 
 /* Declaration of peripheral setup functions */
-void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
 void setupGPIO();
@@ -25,16 +24,13 @@ int main(void)
   /* Call the peripheral setup functions */
   setupGPIO();
   setupDAC();
-  setupTimer(SAMPLE_PERIOD);
-  
+  LETimeron(); // Setup Low Energy Timer 
   /* Enable interrupt handling */
-  setupNVIC();
-  
-  /* TODO for higher energy efficiency, sleep while waiting for interrupts
+  setupNVIC(); 
+  /* TODO for higher energy efficiency:, sleep while waiting for interrupts
      instead of infinite loop for busy-waiting
   */
-  timeron(); 
-  *SCR = 6; // Setup deep sleep
+  *SCR = 6; // Setup deep sleep, note: conflicts with regular timer, therefore Low Energy timer is used instead
   __asm("WFI");
   return 0;
 }
@@ -48,9 +44,10 @@ void setupNVIC()
      You will need TIMER1, GPIO odd and GPIO even interrupt handling for this
      assignment.
   */
-  *ISER0 |= (1 << 12); // Enable timer
-  *ISER0 |= (1 << 1); //  Enalbe GPIO interupt
-  *ISER0 |= (1 << 11); //Enable interupt
+  *ISER0 |= (1 << 11); // Enable GPIO ODD interupt
+  *ISER0 |= (1 << 1); //  Enanle GPIO EVEN interupt
+  //*ISER0 |= (1 << 12); //Enable TIMER1 interupt
+  *ISER0 |= (1 << 26); // Enable LETIMER0 interrupt
 }
 
 /* if other interrupt handlers are needed, use the following names: 
