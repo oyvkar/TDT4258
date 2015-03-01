@@ -5,30 +5,6 @@
 
 #define TIMER_CLOCK 14000000
 
-volatile uint16_t period;
-
-/* function to setup the timer */
-void setupTimer(uint16_t a)
-{
-	period = a;
-
-}
-void timeron() {
-	*CMU_HFPERCLKEN0 |= (1 << 6); 
-	*TIMER1_TOP = period;
-	//*CMU_HFPERCLKEN0 |= (1 << 6); //Set bit 6 high to enable clock to timer
-	*TIMER1_IEN = 1; 
-	*TIMER1_CMD = 1;
-	//*ISER0 |= (1 << 12); // Enable timer interupt
-}
-
-void timeroff() {
-	*TIMER1_IEN = 0;
-	*TIMER1_CMD = 0;
-        *CMU_HFPERCLKEN0 &= ~(1 << 6); //Set bit 6 high to enable clock to timer
-        //*ISER0 &= ~(1 << 12); // Enable timer interupt
-}
-
 // To reduce the energy consumption a low energy timer is used in conjuction with deep sleep mode
 void LETimeron(){
 	*CMU_OSCENCMD = (1<<6);

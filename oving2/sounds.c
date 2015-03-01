@@ -1,7 +1,6 @@
 //File for playing of 8bit sounds.
 #include "efm32gg.h"
 #include "timer.h"
-//#include "danger1.h"
 #include "sound/laser1_uint12.h"
 #include "sound/explosion3_uint12.h"
 #include "sound/danger1_uint12.h"
