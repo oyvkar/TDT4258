@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "spillorama.h"
+#include "sounds.h"
 #include "efm32gg.h"
 #include "timer.h"
 
