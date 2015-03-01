@@ -1,9 +1,8 @@
 #ifndef SPILLORAMA_H
 #define SPILLORAMA_H
 
-//File for playing of 8bit sounds.
-int  dangerf(void);
-int  explosionf(void);
-int  laserf(void);
+// Enum containg names for all sounds
+typedef enum { laser, danger, explosion } soundtype;
+void playSound(soundtype sound);
 
 #endif

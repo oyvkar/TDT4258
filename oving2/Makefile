@@ -22,7 +22,7 @@ ex2.elf : main.o timer.o dac.o gpio.o interrupt_handlers.o sounds.o
 
 .PHONY : upload
 upload :
-	-eACommander.sh -r --address 0x00000000 -f "ex2.bin" -r
+	-start-eACommander.sh -r --address 0x00000000 -f "ex2.bin" -r
 
 .PHONY : clean
 clean :

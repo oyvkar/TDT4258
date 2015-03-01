@@ -1,58 +1,52 @@
 //File for playing of 8bit sounds.
 #include "efm32gg.h"
 #include "timer.h"
+#include "sounds.h"
+
+
+// Sound files
 #include "sound/laser1_uint12.h"
 #include "sound/explosion3_uint12.h"
 #include "sound/danger1_uint12.h"
 
 
-const uint32_t LL = 14962;
-const uint32_t EL = 43523;
-const uint32_t DL = 79223;
-
 volatile uint32_t count = 0;
+volatile soundtype current;
 
-int dangerf(){
-	if(count == (DL-1)){
+void playSound(soundtype sound) {
+	const uint32_t *playlen;
+	const uint16_t *sound_p;
+	
+	// Reset count when changing sound
+	if (sound != current) {
+		count = 0;
+		current = sound;
+	}
+
+	// Set pointers to point to correct sound
+	switch (sound) {
+	case explosion:
+		playlen = &explosionlen;
+		sound_p = explosionsound;
+		break;
+	case danger:
+		playlen = &dangerlen;
+		sound_p = dangersound;
+		break;
+	case laser:
+		playlen = &laserlen;
+		sound_p = lasersound;
+		break;
+	}
+
+	// Push data to DAC or stop timer when done	
+	if (count == (*playlen - 1)) {
 		count = 0;
 		LETimeroff();
-		return 0; // The chip is no longer playing audio
+		return;
+	} else {
+		*DAC0_CH0DATA = sound_p[count];
+		*DAC0_CH1DATA = sound_p[count];
+		count ++;
 	}
-	else{
-		*DAC0_CH0DATA = danger[count];
-		*DAC0_CH0DATA = danger[count];
-		count++;
-		return 1; // The chip is currently playing audio
-	}	
 }
-
-int explosionf(){
-	if(count == (EL-1)){
-		count = 0;
-		LETimeroff();
-		return 0; // The chip is no longer playing audio, and is ready for new input
-	}
-	else{
-		*DAC0_CH0DATA = explosion[count];
-		*DAC0_CH1DATA = explosion[count];
-		*GPIO_PA_DOUT &= ~(0 << 8);
-		count++;
-		return 1; // The chip is currently playing audio
-	}	
-}
-
-
-int laserf(){
-	if(count == (LL-1)){
-		count = 0;
-		LETimeroff();
-		return 0; //The chip is no longer playing audio, and is ready for new input
-	}
-	else{
-		*DAC0_CH0DATA = laser[count];
-		*DAC0_CH1DATA = laser[count];
-		count++;
-		return 1; //The chip is currently playing audio
-	}	
-}
-

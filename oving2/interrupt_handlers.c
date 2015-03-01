@@ -5,29 +5,17 @@
 #include "efm32gg.h"
 #include "timer.h"
 
-volatile int sound = 0;
-volatile bool busybool = 0;
-volatile bool samplingfix = 0; //To ensure 44100 sampling rate the timer has to count twice, as it has only 32000 available from oscillator
+volatile soundtype sound = laser;
+volatile bool samplingfix = 0; 
 
 
 /*LETIMER0 interrupt handler */
 void __attribute__ ((interrupt)) LETIMER0_IRQHandler(){
 
 
+//To ensure 44100 sampling rate the timer has to count twice, as it has only 32000 available from oscillator
 if(~samplingfix){
-	switch(sound) {
-		case 0: 
-			// Do nothing
-			break;
-		case 1: 
-			busybool = laserf();
-			break;
-		case 2:
-			busybool = dangerf();
-			break;
-		case 3:
-			busybool = explosionf();
-		}
+	playSound(sound);
 }else{
 	samplingfix= ~samplingfix;
 }
@@ -36,32 +24,22 @@ if(~samplingfix){
 
 }
 
-
-/* TIMER1 interrupt handler (unused */
-void __attribute__ ((interrupt)) TIMER1_IRQHandler() {
-*TIMER1_IFC = 1;  
-}
 void GPIO_HANDLER() { 
-
-if(busybool){
-	*GPIO_IFC = 0xff;
-}
-else{
 	switch((*GPIO_PC_DIN)){
 		case 0xfe:
-			*GPIO_PA_DOUT = ~(*GPIO_PA_DOUT);
 			LETimeron(); // Start the timer
-			sound = 1;
+			sound = laser;
 			break;
 		case 0xfd:
 			LETimeron(); // Start the timer
-			sound = 2;
+			sound = danger;
 			break;
 		case 0xfb:
 			LETimeron(); // Start the timer
-			sound = 3;
+			sound = explosion;
 			break;
 		case 0xf7:
+			LETimeroff(); // Stop the timer
 			break;
 		case 0xef:
 			break;
@@ -72,8 +50,6 @@ else{
 		case 0x7f:
 			break;
 	}
-
-}
 *GPIO_IFC = 0xff; //Clear interrupt flags
 }
 
