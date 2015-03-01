@@ -1,13 +1,13 @@
 #include <stdint.h>
 #include <stdbool.h>
+
 #include "spillorama.h"
 #include "efm32gg.h"
 #include "timer.h"
+
 volatile int sound = 0;
 volatile bool busybool = 0;
 volatile bool samplingfix = 0; //To ensure 44100 sampling rate the timer has to count twice, as it has only 32000 available from oscillator
-
-
 
 
 /*LETIMER0 interrupt handler */

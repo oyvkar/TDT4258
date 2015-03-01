@@ -2,9 +2,9 @@
 #include "efm32gg.h"
 #include "timer.h"
 //#include "danger1.h"
-#include "laser1_uint12.h"
-#include "explosion3_uint12.h"
-#include "danger1_uint12.h"
+#include "sound/laser1_uint12.h"
+#include "sound/explosion3_uint12.h"
+#include "sound/danger1_uint12.h"
 
 
 const uint32_t LL = 14962;
