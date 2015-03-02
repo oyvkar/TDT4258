@@ -7,22 +7,12 @@
 #include "dac.h"
 
 volatile soundtype sound = laser;
-volatile bool samplingfix = 0; 
 
 
 /*LETIMER0 interrupt handler */
 void __attribute__ ((interrupt)) LETIMER0_IRQHandler(){
-
-
-//To ensure 44100 sampling rate the timer has to count twice, as it has only 32000 available from oscillator
-if(~samplingfix){
 	playSound(sound);
-}else{
-	samplingfix= ~samplingfix;
-}
-
-*LETIMER0_IFC = 1;
-
+	*LETIMER0_IFC = 1;
 }
 
 void GPIO_HANDLER() { 
@@ -53,6 +43,9 @@ void GPIO_HANDLER() {
 			sound = emergency;
 			break;
 		case 0xdf:
+			dacon();
+			LETimeron();
+			sound = melodi;
 			break;
 		case 0xbf:
 			break;

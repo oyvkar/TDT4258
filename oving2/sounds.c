@@ -10,6 +10,7 @@
 #include "sound/danger1_uint12.h"
 #include "sound/beep3_uint12.h"
 #include "sound/emergency_uint12.h"
+#include "sound/melodi_uint12.h"
 
 volatile uint32_t count = 0;
 volatile soundtype current;
@@ -45,6 +46,11 @@ void playSound(soundtype sound) {
 	case emergency:
 		playlen = &emergencylen;
 		sound_p = emergencysound;
+		break;
+	case melodi:
+		playlen = &melodilen;
+		sound_p = melodisound;
+		break;
 	}
 
 	// Push data to DAC or stop timer when done	
