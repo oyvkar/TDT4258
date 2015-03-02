@@ -4,18 +4,17 @@
 #include "efm32gg.h"
 
 /* Declaration of peripheral setup functions */
-void setupDAC();
 void setupNVIC();
 void setupGPIO();
 /* Your code will start executing here */
 int main(void) 
 {  
+  *CMU_HFPERCLKEN0 = 0;
+  *CMU_LFBCLKEN0 = 0;
+  
   /* Call the peripheral setup functions */
   setupGPIO();
-  setupDAC();
-  LETimeron(); // Setup Low Energy Timer 
-  /* Enable interrupt handling */
-  setupNVIC(); 
+  setupNVIC(); /* Enable interrupt handling */
   *SCR = 6; // Setup deep sleep, note: conflicts with regular timer, therefore Low Energy timer is used instead
   __asm("WFI");
   return 0;

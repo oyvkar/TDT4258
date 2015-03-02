@@ -2,13 +2,14 @@
 #include "efm32gg.h"
 #include "timer.h"
 #include "sounds.h"
-
+#include "dac.h"
 
 // Sound files
 #include "sound/laser1_uint12.h"
 #include "sound/explosion3_uint12.h"
 #include "sound/danger1_uint12.h"
-
+#include "sound/beep3_uint12.h"
+#include "sound/emergency_uint12.h"
 
 volatile uint32_t count = 0;
 volatile soundtype current;
@@ -37,12 +38,20 @@ void playSound(soundtype sound) {
 		playlen = &laserlen;
 		sound_p = lasersound;
 		break;
+	case beep:
+		playlen = &beeplen;
+		sound_p = beepsound;
+		break;
+	case emergency:
+		playlen = &emergencylen;
+		sound_p = emergencysound;
 	}
 
 	// Push data to DAC or stop timer when done	
 	if (count == (*playlen - 1)) {
 		count = 0;
 		LETimeroff();
+		dacoff();
 		return;
 	} else {
 		*DAC0_CH0DATA = sound_p[count];

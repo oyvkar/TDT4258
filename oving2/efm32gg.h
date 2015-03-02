@@ -55,6 +55,7 @@
 
 #define CMU_HFPERCLKDIV ((volatile uint32_t*)(CMU_BASE2 + 0x008))
 #define CMU_LFACLKEN0 ((volatile uint32_t*)(CMU_BASE2 + 0x058))
+#define CMU_LFBCLKEN0 ((volatile uint32_t*) (CMU_BASE2 + 0x060))
 #define CMU_LFCLKSEL	((volatile uint32_t*)(CMU_BASE2 + 0x028))
 #define CMU_OSCENCMD ((volatile uint32_t*)(CMU_BASE2 + 0x020))
 

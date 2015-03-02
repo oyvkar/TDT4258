@@ -4,6 +4,7 @@
 #include "sounds.h"
 #include "efm32gg.h"
 #include "timer.h"
+#include "dac.h"
 
 volatile soundtype sound = laser;
 volatile bool samplingfix = 0; 
@@ -27,27 +28,37 @@ if(~samplingfix){
 void GPIO_HANDLER() { 
 	switch((*GPIO_PC_DIN)){
 		case 0xfe:
+			dacon();
 			LETimeron(); // Start the timer
 			sound = laser;
 			break;
 		case 0xfd:
+			dacon();
 			LETimeron(); // Start the timer
 			sound = danger;
 			break;
 		case 0xfb:
+			dacon();
 			LETimeron(); // Start the timer
 			sound = explosion;
 			break;
 		case 0xf7:
-			LETimeroff(); // Stop the timer
+			dacon();
+			LETimeron(); // Start the timer
+			sound = beep;
 			break;
 		case 0xef:
+			dacon();
+			LETimeron();
+			sound = emergency;
 			break;
 		case 0xdf:
 			break;
 		case 0xbf:
 			break;
 		case 0x7f:
+			LETimeroff();
+			dacoff();
 			break;
 	}
 *GPIO_IFC = 0xff; //Clear interrupt flags
