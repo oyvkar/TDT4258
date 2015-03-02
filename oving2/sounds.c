@@ -60,8 +60,7 @@ void playSound(soundtype sound) {
 		dacoff();
 		return;
 	} else {
-		*DAC0_CH0DATA = sound_p[count];
-		*DAC0_CH1DATA = sound_p[count];
+		dacdata(sound_p[count]);
 		count ++;
 	}
 }

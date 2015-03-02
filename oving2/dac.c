@@ -16,3 +16,7 @@ void dacon() {
  *DAC0_CH1CTRL = 1;
 }
 
+void dacdata(uint16_t data) {
+	*DAC0_CH0DATA = data;
+	*DAC0_CH1DATA = data;
+}
