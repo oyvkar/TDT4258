@@ -45,6 +45,7 @@ void GPIO_HANDLER() {
 		case 0xdf:
 			dacon();
 			LETimeron();
+			*LETIMER0_TOP = 32768/32000;
 			sound = melodi;
 			break;
 		case 0xbf:
