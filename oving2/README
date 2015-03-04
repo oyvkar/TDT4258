@@ -1,0 +1,5 @@
+# Oving 2
+#
+# Simply run make && make upload to program
+# Expects eAcommander to be in $PATH
+# Support library is the version not using code scorcery
