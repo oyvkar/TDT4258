@@ -68,16 +68,12 @@ static int __init gamepad_driver_init(void)
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
 	
 	
-	struct resource GPIO_resource;
-    GPIO_resource = request_mem_region(GPIO_PA_BASE + 0x100, 0x20,"GPIO_functions"); //Using PA-adress with offset 0x100 to access GPIO functions
-	if(GPIO_resource == 0)
+	if(request_mem_region(GPIO_PA_BASE + 0x100, 0x20,"GPIO_functions"); /*Using PA-adress with offset 0x100 to access GPIO functions*/  == 0)
 	{
 		printk(KERN_ERR "Port A(GPIO functions) memory request FAILED, returning\n");
 		return -1;
 	}
-	struct resource portC_resource;
-    portC_resource = request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c");
-	if(portC_resource == 0)
+	if( request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c") == 0)
 	{
 		printk(KERN_ERR "Port C memory request FAILED, returning\n");
 		return -1;
@@ -213,7 +209,7 @@ static ssize_t my_write (struct file *filp, const char __user *buff, size_t coun
 
 static irqreturn_t interrupt_handler(int irq, void*dev_id, struct pt_regs *regs){
     //TODO: Clear interrupt flag, handle interrupts
-    return 0;
+    return IRQ_HANDLED;
 }
 
 
