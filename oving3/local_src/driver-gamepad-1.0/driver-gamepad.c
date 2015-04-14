@@ -33,7 +33,7 @@ void __iomem *gpio_portc_mem;
  *
  * This is the first of two exported functions to handle inserting this
  * code into a running kernel
- *
+ ystem
  * Returns 0 if successfull, otherwise -1
  */
 
@@ -51,9 +51,8 @@ static int __init gamepad_driver_init(void)
 	printk("Hello World, here is your module speaking\n");
 
 	// Create chardevice and device node
-	int error = alloc_chardev_region(&devNumber, 0, devCount, "GPIO_buttons"
-	if(error < 0)
-	{
+	int error = alloc_chardev_region(&devNumber, 0, devCount, "GPIO_buttons");
+	if(error < 0) {
 		printk(KERN_ERR "Character device region allocation FAILED, returning.\n");
 		return -1;
 	}
