@@ -105,12 +105,12 @@ static int __init gamepad_driver_init(void)
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	
-	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", 17) < 0)
+	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
-    if(request_irq(18, interrupt_handler, 0, "GPIO_buttons", 18) < 0)
+    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 2 request FAILED, returning \n");
 		return -1;
