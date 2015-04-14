@@ -110,7 +110,7 @@ static int __init gamepad_driver_init(void)
 		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
-    if(request_irq(18, interrupt_handler, 0, "GPIO_buttons", NULL)< 0)
+    if(request_irq(18, interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 2 request FAILED, returning \n");
 		return -1;
@@ -202,8 +202,10 @@ static ssize_t my_write (struct file *filp, const char __user *buff, size_t coun
     return 0; //Not used as we do not want to write to the LEDs on the gamepad
 }
 
-static irqreturn_t interrupt_handler(int irq, void*dev_id, struct pt_regs *regs){
-    //TODO: Clear interrupt flag, handle interrupts
+static irqreturn_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
+    //TODO: handle interrupts
+    memwrite(gpio, GPIO_IFC, 0xffff);//Clear interrupt flags
+    
     return IRQ_HANDLED;
 }
 
