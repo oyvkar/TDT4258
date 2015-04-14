@@ -14,7 +14,7 @@
 #include <linux/interrupt.h>
 #include <linux/uaccess.h>
 #include <linux/poll.h>
-#include <kdev_t.h>
+#include <linux/kdev_t.h>
 #include <moduleparam.h>
 
 #include <asm/io.h>
