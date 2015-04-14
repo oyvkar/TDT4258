@@ -19,7 +19,7 @@
 
 
 #include "efm32gg.h"
-
+#include "driver-gamepad.h"
 
 dev_t devNumber;
 unsigned int devCount = 1;
@@ -181,15 +181,28 @@ static void __exit gamepad_driver_cleanup(void)
 
 /* Functions for using the gamepad from userspace */
 
-int gamepad_open(struct inode *inode,struct file *file){
+static int gamepad_open(struct inode *inode,struct file *file){
 	return 0; //Configuration handled by the module_init
 }
 
-int gamepad_release(struct inode *inode, struct file *file){
+static int gamepad_release(struct inode *inode, struct file *file){
 	return 0; //Configuration handled by the module_exit
 }
 
+// user program reads from the driver
+static ssize_t my_read (struct file *filp, char __user *buff, size_t count, loff_t *offp){
+    uint32_t data = ioread32(GPIO_PC_DIN);
+    copy_to_user(buff, &data, 1);
 
+    return 1;
+}
+
+
+
+//user program writes to the driver
+static ssize_t my_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
+    return 0; //Not used as we do not want to write to the LEDs on the gamepad
+}
 
 
 /*
