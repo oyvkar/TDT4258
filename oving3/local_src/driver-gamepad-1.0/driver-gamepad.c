@@ -43,7 +43,8 @@ void __iomem *gpio_portc_mem;
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
 //	.llseek = gamepad_llseek,
-	.read = gamepad_read,
+	.read = my_read,
+    .write = my_write,
 //	.mmap = gamepad_map,
 	.open = gamepad_open,
 	.release = gamepad_release,
@@ -55,7 +56,7 @@ static int __init gamepad_driver_init(void)
 
 	// Create chardevice and device node
 	int error;
-    error = alloc_chardev_region(&devNumber, 0, devCount, "GPIO_buttons");
+    error = alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_buttons");
 	if(error < 0) {
 		printk(KERN_ERR "Character device region allocation FAILED, returning.\n");
 		return -1;
@@ -67,14 +68,15 @@ static int __init gamepad_driver_init(void)
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
 	
 	
-	struct resource *GPIO_resource = request_mem_region(GPIO_PA_BASE + 0x100, 0x20,"GPIO_functions"); //Using PA-adress with offset 0x100 to access GPIO functions
+	struct resource GPIO_resource;
+    GPIO_resource = request_mem_region(GPIO_PA_BASE + 0x100, 0x20,"GPIO_functions"); //Using PA-adress with offset 0x100 to access GPIO functions
 	if(GPIO_resource == 0)
 	{
 		printk(KERN_ERR "Port A(GPIO functions) memory request FAILED, returning\n");
 		return -1;
 	}
-	struct resource *portC_resource;
-    *portC_resource= request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c");
+	struct resource portC_resource;
+    portC_resource = request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c");
 	if(portC_resource == 0)
 	{
 		printk(KERN_ERR "Port C memory request FAILED, returning\n");
