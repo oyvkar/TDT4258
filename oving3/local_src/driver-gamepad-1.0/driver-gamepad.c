@@ -37,8 +37,8 @@ void __iomem *gpio_portc_mem;
  * Returns 0 if successfull, otherwise -1
  */
 
-static struct file_operations fops {
-	.owner= THIS_MODULE,
+static struct file_operations fops = {
+	.owner = THIS_MODULE,
 //	.llseek = gamepad_llseek,
 	.read = gamepad_read,
 	.mmap = gamepad_map,
