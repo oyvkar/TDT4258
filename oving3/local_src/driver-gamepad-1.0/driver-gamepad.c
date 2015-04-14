@@ -124,8 +124,7 @@ static int __init gamepad_driver_init(void)
 	buttons_cdev = cdev_alloc();
 	buttons_cdev->owner = THIS_MODULE;
 	buttons_cdev->ops = &fops;
-	error = cdev_add(buttons_cdev,devNumber, devCount);
-	if(error == 0)
+	if(cdev_add(buttons_cdev,devNumber, devCount) == 0)
 	{
 		printk(KERN_ERR "Char device activation failed, returning\n");
 		return -1;
