@@ -12,11 +12,14 @@
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/interrupt.h>
-
+#include <linux/uaccess.h>
+#include <linux/poll.h>
+#include <kdev_t.h>
+#include <moduleparam.h>
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
-
+#include <asm/siginfo.h>
 
 #include "efm32gg.h"
 #include "driver-gamepad.h"
@@ -41,7 +44,7 @@ static struct file_operations fops = {
 	.owner = THIS_MODULE,
 //	.llseek = gamepad_llseek,
 	.read = gamepad_read,
-	.mmap = gamepad_map,
+//	.mmap = gamepad_map,
 	.open = gamepad_open,
 	.release = gamepad_release,
 };
@@ -51,7 +54,8 @@ static int __init gamepad_driver_init(void)
 	printk("Hello World, here is your module speaking\n");
 
 	// Create chardevice and device node
-	int error = alloc_chardev_region(&devNumber, 0, devCount, "GPIO_buttons");
+	int error;
+    error = alloc_chardev_region(&devNumber, 0, devCount, "GPIO_buttons");
 	if(error < 0) {
 		printk(KERN_ERR "Character device region allocation FAILED, returning.\n");
 		return -1;
@@ -69,7 +73,8 @@ static int __init gamepad_driver_init(void)
 		printk(KERN_ERR "Port A(GPIO functions) memory request FAILED, returning\n");
 		return -1;
 	}
-	struct resource *portC_resource = request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c");
+	struct resource *portC_resource;
+    *portC_resource= request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c");
 	if(portC_resource == 0)
 	{
 		printk(KERN_ERR "Port C memory request FAILED, returning\n");
@@ -95,12 +100,12 @@ static int __init gamepad_driver_init(void)
 
 	//Configure interrupts and GPIO, same procedure as ex1 and ex2
 
-	iowrite32(0x33333333,   gpio_portc_mem + GPIO_PC_MODEL);
-	iowrite32(0xff, 	gpio_portc_mem + GPIO_PC_DOUT);
-	iowrite32(0x22222222,   gpio_mem + GPIO_EXTIPSELL);
-	iowrite32(0xff, 	gpio_mem + GPIO_EXTIRISE);
-	iowrite32(0xff, 	gpio_mem + GPIO_EXTIFALL);
-	iowrite32(0xff, 	gpio_mem + GPIO_IEN);
+	iowrite32(0x33333333,   gpio_portc_mem + *GPIO_PC_MODEL);
+	iowrite32(0xff, 	gpio_portc_mem + *GPIO_PC_DOUT);
+	iowrite32(0x22222222,   gpio_mem + *GPIO_EXTIPSELL);
+	iowrite32(0xff, 	gpio_mem + *GPIO_EXTIRISE);
+	iowrite32(0xff, 	gpio_mem + *GPIO_EXTIFALL);
+	iowrite32(0xff, 	gpio_mem + *GPIO_IEN);
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	
@@ -156,16 +161,16 @@ static void __exit gamepad_driver_cleanup(void)
 
 	//Disable GPIO interrupts
 	printk(KERN_DEBUG "Disable GPIUO interrupts\n");
-	iowrite32(0x0, gpio_mem + GPIO_IEN);
-	iowrite32(0x0, gpio_mem + GPIO_EXTIRISE);
-	iowrite32(0x0, gpio_mem + GPIO_EXTIFALL);
+	iowrite32(0x0, gpio_mem + *GPIO_IEN);
+	iowrite32(0x0, gpio_mem + *GPIO_EXTIRISE);
+	iowrite32(0x0, gpio_mem + *GPIO_EXTIFALL);
 
 	printk(KERN_DEBUG "Unmap GPIO\n");
 	iounmap(gpio_mem);
 	iounmap(gpio_portc_mem);
 
 	//Release memory
-	printk(KERN_DEBUG "Release memory region\n";
+	printk(KERN_DEBUG "Release memory region\n");
 	release_mem_region(GPIO_PA_BASE + 0x100, 0x20);
 	release_mem_region(GPIO_PC_BASE, 0x24);
 
