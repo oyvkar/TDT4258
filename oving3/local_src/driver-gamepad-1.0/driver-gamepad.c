@@ -202,11 +202,10 @@ static ssize_t my_write (struct file *filp, const char __user *buff, size_t coun
     return 0; //Not used as we do not want to write to the LEDs on the gamepad
 }
 
-void interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
+static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
     //TODO: handle interrupts
    // memwrite(gpio, GPIO_IFC, 0xffff);//Clear interrupt flags
-    
-   // return IRQ_HANDLED;
+    return (irq_handler_t) IRQ_HANDLED; 
 }
 
 
