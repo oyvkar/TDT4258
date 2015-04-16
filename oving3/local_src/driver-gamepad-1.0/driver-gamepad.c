@@ -95,7 +95,7 @@ static int __init gamepad_driver_init(void)
 	}
 
 	//Configure interrupts and GPIO, same procedure as ex1 and ex2
-
+    printk(KERN_DEBUG "Config interrupt and GIPO\n");
 	iowrite32(0x33333333,   gpio_portc_mem + *GPIO_PC_MODEL);
 	iowrite32(0xff, 	gpio_portc_mem + *GPIO_PC_DOUT);
 	iowrite32(0x22222222,   gpio_mem + *GPIO_EXTIPSELL);
@@ -104,7 +104,7 @@ static int __init gamepad_driver_init(void)
 	iowrite32(0xff, 	gpio_mem + *GPIO_IEN);
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
-	
+	printk(KERN_DEBUG "Setting up IRQ\n");
 	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
@@ -119,9 +119,10 @@ static int __init gamepad_driver_init(void)
 	//might be wise to clear interrupt flags here
 
     
-
+    
 	//Activate driver and register allocations
-	buttons_cdev = cdev_alloc();
+    printk(KERN_DEBUG "Activating character device\n");
+    buttons_cdev = cdev_alloc();
 	buttons_cdev->owner = THIS_MODULE;
 	buttons_cdev->ops = &fops;
 	if(cdev_add(buttons_cdev,devNumber, devCount) == 0)
