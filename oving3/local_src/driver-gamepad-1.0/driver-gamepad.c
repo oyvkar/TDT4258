@@ -30,7 +30,7 @@ struct cdev *buttons_cdev;
 struct class *cl;
 void __iomem *gpio_mem;
 void __iomem *gpio_portc_mem;
-
+static int driverOpen = 0;
 /*
  * template_init - function to insert this module into kernel space
  *
@@ -187,11 +187,19 @@ static void __exit gamepad_driver_cleanup(void)
 /* Functions for using the gamepad from userspace */
 
 static int gamepad_open(struct inode *inode,struct file *file){
-	return 0; //Configuration handled by the module_init
+    if (driverOpen) {
+        return -EINUSE;
+    }
+
+    try_module_get(THIS_MODULE); // Prevent module unloading while in use
+    driverOpen = 1;
+    return SUCCESS; //Configuration handled by the module_init
 }
 
 static int gamepad_release(struct inode *inode, struct file *file){
-	return 0; //Configuration handled by the module_exit
+    driverOpen = 0;
+    module_put(THIS_MODULE); // Allow module unloading
+    return SUCCESS; //Configuration handled by the module_exit
 }
 
 // user program reads from the driver
