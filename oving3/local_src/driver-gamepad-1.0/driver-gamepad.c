@@ -86,7 +86,7 @@ static int __init gamepad_driver_init(void)
 		printk(KERN_ERR "Port A(GPIO) remap failed, returning\n");
 		return -1;
 	}
-	gpio_portc_mem = ioremap_nocache(GPIO_PC_BASE, 0x24);
+	gpio_portc_mem = ioremap_nocache(GPIO_PC_BASE, 0x20);
 	printk(KERN_DEBUG "gpio_portc_mem_addr: %p\n", gpio_portc_mem);
 	if(gpio_portc_mem == 0)
 	{
@@ -96,7 +96,7 @@ static int __init gamepad_driver_init(void)
 
 	//Configure interrupts and GPIO, same procedure as ex1 and ex2
     printk(KERN_DEBUG "Config interrupt and GIPO\n");
-	iowrite32(0x33333333,   uint32_t(gpio_portc_mem) + uint32_t(GPIO_PC_MODEL));
+	iowrite32(0x33333333,   gpio_portc_mem + 0x0c );
 	iowrite32(0xff, 	gpio_portc_mem + GPIO_PC_DOUT);
 	iowrite32(0x22222222,   gpio_mem + GPIO_EXTIPSELL);
 	iowrite32(0xff, 	gpio_mem + GPIO_EXTIRISE);
