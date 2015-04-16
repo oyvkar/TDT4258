@@ -207,9 +207,9 @@ static int gamepad_release(struct inode *inode, struct file *file){
 // user program reads from the driver
 static ssize_t my_read (struct file *filp, char __user *buff, size_t count, loff_t *offp){
     uint32_t data = ioread32(GPIO_PC_DIN);
-    copy_to_user(buff, &data, 4);
+    copy_to_user(itoa(buff), &data, 32);
 
-    return 1;
+    return SUCCESS;
 }
 
 
@@ -222,7 +222,7 @@ static ssize_t my_write (struct file *filp, const char __user *buff, size_t coun
 static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
     //TODO: handle interrupts
     iowrite32(0xffff, gpio_mem + 0x11c);//Clear interrupt flags
-    printk(KERN_INFO "GPIO Interrupt\n");
+    printk(KERN_DEBUG "GPIO Interrupt\n");
     return (irq_handler_t) IRQ_HANDLED; 
 }
 
