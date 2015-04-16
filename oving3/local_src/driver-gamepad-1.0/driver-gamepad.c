@@ -250,6 +250,7 @@ interrupt_handler
 module_init(gamepad_driver_init);
 module_exit(gamepad_driver_cleanup);
 
+MODULE_AUTHOR("TDT4258 Group ??");
 MODULE_DESCRIPTION("Module for controlling a gamepad provided in the course TDT4258 at NTNU");
 MODULE_LICENSE("GPL");
 
