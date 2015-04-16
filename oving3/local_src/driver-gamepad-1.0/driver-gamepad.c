@@ -22,8 +22,10 @@
 #include <asm/siginfo.h>
 
 #include "efm32gg.h"
-#include "driver-gamepad.h"
+#include "driver-gamepad.h"i
 
+
+#define SUCCESS 0
 dev_t devNumber;
 unsigned int devCount = 1;
 struct cdev *buttons_cdev;
