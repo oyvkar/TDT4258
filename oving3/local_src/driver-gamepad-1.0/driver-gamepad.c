@@ -79,7 +79,7 @@ static int __init gamepad_driver_init(void)
 	
 
 	// Remap to virtual addresses
-	gpio_mem = ioremap_nocache(GPIO_PA_BASE+0x100, 0x20);  //Using the PA-address to access general GPIO functions with offset 0x100
+	gpio_mem = ioremap_nocache(GPIO_PA_BASE, 0x20);  //Using the PA-address to access general GPIO functions
 	printk(KERN_DEBUG "gpio_mem_addr: %p\n", gpio_mem);
 	if(gpio_mem == 0)
 	{
