@@ -211,8 +211,8 @@ static ssize_t my_write (struct file *filp, const char __user *buff, size_t coun
 
 static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
     //TODO: handle interrupts
-   // memwrite(gpio, GPIO_IFC, 0xffff);//Clear interrupt flags
-    return (irq_handler_t) IRQ_NONE; 
+    iowrite32(0xffff, gpio + 0x11c);//Clear interrupt flags
+    return (irq_handler_t) IRQ_HANDLED; 
 }
 
 
