@@ -96,7 +96,7 @@ static int __init gamepad_driver_init(void)
 
 	//Configure interrupts and GPIO, same procedure as ex1 and ex2
     printk(KERN_DEBUG "Config interrupt and GIPO\n");
-	iowrite32(0x33333333,   (void *) (&gpio_portc_mem + &GPIO_PC_MODEL));
+	iowrite32(0x33333333,   (void __iomem *) (gpio_portc_mem + GPIO_PC_MODEL));
 	iowrite32(0xff, 	gpio_portc_mem + GPIO_PC_DOUT);
 	iowrite32(0x22222222,   gpio_mem + GPIO_EXTIPSELL);
 	iowrite32(0xff, 	gpio_mem + GPIO_EXTIRISE);
