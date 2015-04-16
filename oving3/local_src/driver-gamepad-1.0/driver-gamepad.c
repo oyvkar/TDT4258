@@ -115,7 +115,7 @@ static int __init gamepad_driver_init(void)
 		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
-    prinkt(KERN_DEBUG "Setting up IRQ 18\n");
+    printk(KERN_DEBUG "Setting up IRQ 18\n");
     if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 2 request FAILED, returning \n");
