@@ -39,7 +39,8 @@ struct score{
     int playerBscore;
 }gamescore;
 
-
+uint16_t white = 255;
+uint16_t black = 0;
 
 
 int main(int argc, char *argv[])
@@ -53,8 +54,9 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(playerAscore < 3 && playerBscore < 3){
-    //TODO: Generate a matrix from the current positions of the ball and the bats, then use the draw function with the matrix to generate an image on the screen
-    //Handle scoring 
+    //TODO:
+    //Handle Inputs
+    //Draw Screen
     if(input == upLeft) movebat(0);
     if (input == downLeft) movebat(1);
     if(input == upRight) movebat(2);
@@ -70,34 +72,41 @@ void movebat(int input){
     switch (input) {
         case 0; //Move left bat up
             if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
+                //Draw a black rectangle to erase the previous position
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, black);
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos --;
-                //TODO: Remove last position
-                //      Draw new position
+                //Draw a white rectangle a the new position
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, white);
             }
             break;
         case 1; //Move left bat down
             if (playerbat_a.Ypos + playerbat_a.heigth < playfield.height) {   //Checks that the bat doesn't move beyond the screen
+               
+                //Draw a black rectangle to erase the previous position
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, black);
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos ++;
-                //TODO: Remove last position
-                //      Draw new position
-            }
+                //Draw a white rectangle a the new position
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, white);            }
             break;
         case 2; //Move right bat up
-            if (playerbat_b.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
+                //Draw a black rectangle to erase the previous position
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, black);
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos --;
-                //TODO: Remove last position
-                //      Draw new position
-            }
+                //Draw a white rectangle a the new position
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, white);
             break;
         case 3; //Move right bat down
             if (playerbat_b.Ypos + playerbat_b.heigth < playfield.height) {   //Checks that the bat doesn't move beyond the screen
+               
+                //Draw a black rectangle to erase the previous position
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, black);  
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos ++;
-                //TODO: Remove last position
-                //      Draw new position
+                //Draw a white rectangle a the new position
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, white);
             }
             break;
         default:
@@ -110,15 +119,21 @@ void movebat(int input){
 }
 
 void moveball(){
+
+    //Draw a black ball to erase the current ball
+    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, black);
+
+    //Update current position
     ball_a.oldXpos = ball_a.Xpos;
     ball_a.oldYpos = ball_a.Ypos;
-
+    //Calculate next position
     ball_a.Xpos = ball_a.Xpos + ball_a.Xspeed;
     ball_a.Ypos = ball_a.Ypos + ball_a.Yspeed;
 
-    //TODO: Remove old drawn position and draw new position
-    //
-    //
+    //Draw a new white ball
+    draw_rectangle(ball_a.Xpos-ball_a.radius, ball_a.Ypos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white);
+ 
+    //Handle some ball collisions
     if(ball_a.Ypos - ball_a.radius < 0)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
     if(ball_a.Ypos + ball_a.radius > playfield_a.height)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
 }
@@ -152,8 +167,6 @@ void handlePhysics(){
 }
 
 
-
-
 void initialize(bool first)
 {
     // Starts the game with the ball in the centre of the playfield, and the ball moving towards the player who won the previous round
@@ -183,22 +196,57 @@ void initialize(bool first)
         playerAscore = 0;
         playerBscore = 0;
     }
+    initialize_screen();//Initializes the screen
+    single_color(0);//sets the playfield to black
 }
 
-void 
+uint16_t *screen;
+struct fb_copyarea rect;
+struct fb_var_screeninfo screen_info;
+int fd;
+
+void initialize_screen(){
+    
+    rect.dx = 0;
+    rect.dy = 0;
+    rect.width = 320;
+    rect.height = 240;
+    
+    fd = open("/dev/fb0", O_RDWR);
+    if (!fd) {
+        printf("Could not open file containing framebuffer device \n");
+        exit(EXIT_FAILURE);
+    }
+    if(ioctl(fd, FBIOGET_VCREENINFO, &screen_info) == -1){
+        printf("Could not aquire screen info \n");
+        exit(EXIT_FAILURE);
+    }
 
 
+    screen_size = (320*240) * screen_info.bits_per_pixel/8;
 
 
+    screen = (uint16_t*) mmap(NULL, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    printf("Screen successfully initialized\n");
+}
 
-
-
-
-void draw(uint32_t matrix[SIZE][SIZE])
-{
-    //Function to draw the game, represented as a matrix to screen
-
-
-
+void update_screen(){
+    ioctl(fd,0x4680,&rect);
     return;
+}
+
+void single_color(uint16_t color){
+    for (i = 0; i < 320*260; i++) {
+        screen[i] = color;
+    }
+    update_screen();
+}
+
+void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
+    for (i = 0; i < width; i++) {
+        for (j = 0; j < height; j++) {
+            screen[(Xpos+i)*2+(j+Ypos)*640] = color;
+        }
+    }
+    update_screen();
 }
