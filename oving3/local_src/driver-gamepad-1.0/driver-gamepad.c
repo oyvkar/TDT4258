@@ -188,7 +188,7 @@ static void __exit gamepad_driver_cleanup(void)
 
 static int gamepad_open(struct inode *inode,struct file *file){
     if (driverOpen) {
-        return -EINUSE;
+        return -EBUSY;
     }
 
     try_module_get(THIS_MODULE); // Prevent module unloading while in use
