@@ -30,7 +30,7 @@ struct cdev *buttons_cdev;
 struct class *cl;
 void __iomem *gpio_mem;
 void __iomem *gpio_portc_mem;
-
+static int driverOpen = 0;
 /*
  * template_init - function to insert this module into kernel space
  *
@@ -79,14 +79,14 @@ static int __init gamepad_driver_init(void)
 	
 
 	// Remap to virtual addresses
-	gpio_mem = ioremap_nocache(GPIO_PA_BASE+0x100, 0x20);  //Using the PA-address to access general GPIO functions with offset 0x100
+	gpio_mem = ioremap_nocache(GPIO_PA_BASE, 0x20);  //Using the PA-address to access general GPIO functions
 	printk(KERN_DEBUG "gpio_mem_addr: %p\n", gpio_mem);
 	if(gpio_mem == 0)
 	{
 		printk(KERN_ERR "Port A(GPIO) remap failed, returning\n");
 		return -1;
 	}
-	gpio_portc_mem = ioremap_nocache(GPIO_PC_BASE, 0x24);
+	gpio_portc_mem = ioremap_nocache(GPIO_PC_BASE, 0x20);
 	printk(KERN_DEBUG "gpio_portc_mem_addr: %p\n", gpio_portc_mem);
 	if(gpio_portc_mem == 0)
 	{
@@ -96,20 +96,26 @@ static int __init gamepad_driver_init(void)
 
 	//Configure interrupts and GPIO, same procedure as ex1 and ex2
     printk(KERN_DEBUG "Config interrupt and GIPO\n");
-	iowrite32(0x33333333,   gpio_portc_mem + *GPIO_PC_MODEL);
-	iowrite32(0xff, 	gpio_portc_mem + *GPIO_PC_DOUT);
-	iowrite32(0x22222222,   gpio_mem + *GPIO_EXTIPSELL);
-	iowrite32(0xff, 	gpio_mem + *GPIO_EXTIRISE);
-	iowrite32(0xff, 	gpio_mem + *GPIO_EXTIFALL);
-	iowrite32(0xff, 	gpio_mem + *GPIO_IEN);
+	iowrite32(0x33333333,   gpio_portc_mem + 0x0c );
+    printk(KERN_DEBUG "Bla\n");
+    iowrite32(0xff, 	gpio_portc_mem + 0x0c);
+    printk(KERN_DEBUG "Bla\n");
+    iowrite32(0x22222222,   gpio_mem + 0x100);
+    printk(KERN_DEBUG "bla\n");
+    iowrite32(0xff, 	gpio_mem + 0x108);
+    printk(KERN_DEBUG "blag\n");
+    iowrite32(0xff, 	gpio_mem + 0x10c);
+    printk(KERN_DEBUG "agag\n");
+    iowrite32(0xff, 	gpio_mem + 0x110);
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
-	printk(KERN_DEBUG "Setting up IRQ\n");
+	printk(KERN_DEBUG "Setting up IRQi 17\n");
 	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
+    printk(KERN_DEBUG "Setting up IRQ 18\n");
     if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 2 request FAILED, returning \n");
@@ -125,7 +131,7 @@ static int __init gamepad_driver_init(void)
     buttons_cdev = cdev_alloc();
 	buttons_cdev->owner = THIS_MODULE;
 	buttons_cdev->ops = &fops;
-	if(cdev_add(buttons_cdev,devNumber, devCount) == 0)
+	if(cdev_add(buttons_cdev,devNumber, devCount) < 0)
 	{
 		printk(KERN_ERR "Char device activation failed, returning\n");
 		return -1;
@@ -155,9 +161,9 @@ static void __exit gamepad_driver_cleanup(void)
 
 	//Disable GPIO interrupts
 	printk(KERN_DEBUG "Disable GPIUO interrupts\n");
-	iowrite32(0x0, gpio_mem + *GPIO_IEN);
-	iowrite32(0x0, gpio_mem + *GPIO_EXTIRISE);
-	iowrite32(0x0, gpio_mem + *GPIO_EXTIFALL);
+	iowrite32(0x0, gpio_mem + 0x110);
+	iowrite32(0x0, gpio_mem + 0x108);
+	iowrite32(0x0, gpio_mem + 0x10c);
 
 	printk(KERN_DEBUG "Unmap GPIO\n");
 	iounmap(gpio_mem);
@@ -165,8 +171,8 @@ static void __exit gamepad_driver_cleanup(void)
 
 	//Release memory
 	printk(KERN_DEBUG "Release memory region\n");
-	release_mem_region(GPIO_PA_BASE + 0x100, 0x20);
-	release_mem_region(GPIO_PC_BASE, 0x24);
+	release_mem_region(GPIO_PA_BASE, 0x20);
+	release_mem_region(GPIO_PC_BASE, 0x20);
 
 	//Destroy class and device
 	printk(KERN_DEBUG "Destroy class and device\n");
@@ -181,11 +187,19 @@ static void __exit gamepad_driver_cleanup(void)
 /* Functions for using the gamepad from userspace */
 
 static int gamepad_open(struct inode *inode,struct file *file){
-	return 0; //Configuration handled by the module_init
+    if (driverOpen) {
+        return -EBUSY;
+    }
+
+    try_module_get(THIS_MODULE); // Prevent module unloading while in use
+    driverOpen = 1;
+    return SUCCESS; //Configuration handled by the module_init
 }
 
 static int gamepad_release(struct inode *inode, struct file *file){
-	return 0; //Configuration handled by the module_exit
+    driverOpen = 0;
+    module_put(THIS_MODULE); // Allow module unloading
+    return SUCCESS; //Configuration handled by the module_exit
 }
 
 // user program reads from the driver
@@ -205,7 +219,8 @@ static ssize_t my_write (struct file *filp, const char __user *buff, size_t coun
 
 static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
     //TODO: handle interrupts
-   // memwrite(gpio, GPIO_IFC, 0xffff);//Clear interrupt flags
+    iowrite32(0xffff, gpio_mem + 0x11c);//Clear interrupt flags
+    printk(KERN_INFO "GPIO Interrupt\n");
     return (irq_handler_t) IRQ_HANDLED; 
 }
 
@@ -235,6 +250,7 @@ interrupt_handler
 module_init(gamepad_driver_init);
 module_exit(gamepad_driver_cleanup);
 
+MODULE_AUTHOR("TDT4258 Group ??");
 MODULE_DESCRIPTION("Module for controlling a gamepad provided in the course TDT4258 at NTNU");
 MODULE_LICENSE("GPL");
 
