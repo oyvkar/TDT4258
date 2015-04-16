@@ -16,7 +16,7 @@
 #include <linux/poll.h>
 #include <linux/kdev_t.h>
 #include <linux/moduleparam.h>
-#include <cstdlib.h>
+#include <stdlib.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/siginfo.h>
