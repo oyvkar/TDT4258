@@ -161,9 +161,9 @@ static void __exit gamepad_driver_cleanup(void)
 
 	//Disable GPIO interrupts
 	printk(KERN_DEBUG "Disable GPIUO interrupts\n");
-	iowrite32(0x0, gpio_mem + *GPIO_IEN);
-	iowrite32(0x0, gpio_mem + *GPIO_EXTIRISE);
-	iowrite32(0x0, gpio_mem + *GPIO_EXTIFALL);
+	iowrite32(0x0, gpio_mem + 0x110);
+	iowrite32(0x0, gpio_mem + 0x108);
+	iowrite32(0x0, gpio_mem + 0x10c);
 
 	printk(KERN_DEBUG "Unmap GPIO\n");
 	iounmap(gpio_mem);
@@ -171,8 +171,8 @@ static void __exit gamepad_driver_cleanup(void)
 
 	//Release memory
 	printk(KERN_DEBUG "Release memory region\n");
-	release_mem_region(GPIO_PA_BASE + 0x100, 0x20);
-	release_mem_region(GPIO_PC_BASE, 0x24);
+	release_mem_region(GPIO_PA_BASE, 0x20);
+	release_mem_region(GPIO_PC_BASE, 0x20);
 
 	//Destroy class and device
 	printk(KERN_DEBUG "Destroy class and device\n");
