@@ -68,12 +68,12 @@ static int __init gamepad_driver_init(void)
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
 	
 	
-	if(request_mem_region(GPIO_PA_BASE + 0x100, 0x20,"GPIO_functions") /*Using PA-adress with offset 0x100 to access GPIO functions*/  == 0)
+	if(request_mem_region(GPIO_PA_BASE, 0x20,"GPIO_functions") /*Using PA-adress with offset 0x100 to access GPIO functions*/  == 0)
 	{
 		printk(KERN_ERR "Port A(GPIO functions) memory request FAILED, returning\n");
 		return -1;
 	}
-	if( request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c") == 0)
+	if( request_mem_region(GPIO_PC_BASE, 0x20, "GPIO_port_c") == 0)
 	{
 		printk(KERN_ERR "Port C memory request FAILED, returning\n");
 		return -1;
@@ -207,7 +207,7 @@ static int gamepad_release(struct inode *inode, struct file *file){
 // user program reads from the driver
 static ssize_t my_read (struct file *filp, char __user *buff, size_t count, loff_t *offp){
     uint32_t data = ioread32(GPIO_PC_DIN);
-    copy_to_user(buff, &data, 1);
+    copy_to_user(buff, &data, 4);
 
     return 1;
 }
