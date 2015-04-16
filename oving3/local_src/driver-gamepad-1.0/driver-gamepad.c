@@ -16,7 +16,6 @@
 #include <linux/poll.h>
 #include <linux/kdev_t.h>
 #include <linux/moduleparam.h>
-#include <stdlib.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/siginfo.h>
@@ -207,8 +206,7 @@ static int gamepad_release(struct inode *inode, struct file *file){
 // user program reads from the driver
 static ssize_t my_read (struct file *filp, char __user *buff, size_t count, loff_t *offp){
     uint32_t data = ioread32(GPIO_PC_DIN);
-    char daa[33] = itoa(data);
-    copy_to_user(buff, &daa, 33);
+    copy_to_user(buff, &data, 4);
 
     return 1;
 }
