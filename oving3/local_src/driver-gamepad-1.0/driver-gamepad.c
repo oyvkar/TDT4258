@@ -96,12 +96,12 @@ static int __init gamepad_driver_init(void)
 
 	//Configure interrupts and GPIO, same procedure as ex1 and ex2
     printk(KERN_DEBUG "Config interrupt and GIPO\n");
-	iowrite32(0x33333333,   gpio_portc_mem + *GPIO_PC_MODEL);
-	iowrite32(0xff, 	gpio_portc_mem + *GPIO_PC_DOUT);
-	iowrite32(0x22222222,   gpio_mem + *GPIO_EXTIPSELL);
-	iowrite32(0xff, 	gpio_mem + *GPIO_EXTIRISE);
-	iowrite32(0xff, 	gpio_mem + *GPIO_EXTIFALL);
-	iowrite32(0xff, 	gpio_mem + *GPIO_IEN);
+	iowrite32(0x33333333,   gpio_portc_mem + GPIO_PC_MODEL);
+	iowrite32(0xff, 	gpio_portc_mem + GPIO_PC_DOUT);
+	iowrite32(0x22222222,   gpio_mem + GPIO_EXTIPSELL);
+	iowrite32(0xff, 	gpio_mem + GPIO_EXTIRISE);
+	iowrite32(0xff, 	gpio_mem + GPIO_EXTIFALL);
+	iowrite32(0xff, 	gpio_mem + GPIO_IEN);
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	printk(KERN_DEBUG "Setting up IRQ\n");
