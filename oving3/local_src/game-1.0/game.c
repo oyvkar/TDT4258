@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+//Mangler masse includes her...
 
 
 //Game variables
@@ -56,7 +56,6 @@ void play(){
     while(playerAscore < 3 && playerBscore < 3){
     //TODO:
     //Handle Inputs
-    //Draw Screen
     if(input == upLeft) movebat(0);
     if (input == downLeft) movebat(1);
     if(input == upRight) movebat(2);
