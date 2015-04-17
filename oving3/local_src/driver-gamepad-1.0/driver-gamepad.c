@@ -78,8 +78,8 @@ static int __init gamepad_driver_init(void)
 
 	// Remap to virtual addresses
 	gpio_porta_mem = ioremap_nocache(GPIO_PA_BASE, 0x24);
-	printk(KERN_DEBUG "gpio_porta_mem_addr: %p\n", gpio_mem);
-	if(gpio_mem == 0)
+	printk(KERN_DEBUG "gpio_porta_mem_addr: %p\n", gpio_porta_mem);
+	if(gpio_porta_mem == 0)
 	{
 		printk(KERN_ERR "Port A remap failed\n");
 		return -1;
@@ -110,7 +110,7 @@ static int __init gamepad_driver_init(void)
     iowrite32(0x22222222,   gpio_int_mem + EXTIPSELL_OFFSET);
     printk(KERN_DEBUG "bla\n");
     // Enable interrupt on rising edge
-    iowrite32(0xff, gpio_int_mem 0 EXTIRISE_OFFSET);
+    iowrite32(0xff, gpio_int_mem + EXTIRISE_OFFSET);
     printk(KERN_DEBUG "blag\n");
     // Enable interrupt on falling edge
     iowrite32(0xff, gpio_int_mem + EXTIFALL_OFFSET);
@@ -173,7 +173,7 @@ static void __exit gamepad_driver_cleanup(void)
 	printk(KERN_DEBUG "Disable GPIUO interrupts\n");
 	iowrite32(0x0, gpio_int_mem + IEN_OFFSET);
 	iowrite32(0x0, gpio_int_mem + EXTIRISE_OFFSET);
-	iowrite32(0x0, gpio_mem + EXTIFALL_OFFSET);
+	iowrite32(0x0, gpio_int_mem + EXTIFALL_OFFSET);
 
 	printk(KERN_DEBUG "Unmap GPIO\n");
 	iounmap(gpio_porta_mem);
@@ -184,7 +184,7 @@ static void __exit gamepad_driver_cleanup(void)
 	printk(KERN_DEBUG "Release memory region\n");
 	release_mem_region(GPIO_PA_BASE, 0x24);
 	release_mem_region(GPIO_PC_BASE, 0x24);
-    release_mem_region(GIPO_INT_BASE, 0x20);
+    release_mem_region(GPIO_INT_BASE, 0x20);
 
 	//Destroy class and device
 	printk(KERN_DEBUG "Destroy class and device\n");
