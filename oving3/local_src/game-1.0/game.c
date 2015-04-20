@@ -142,7 +142,7 @@ void moveball(){
     ball_a.Ypos = ball_a.Ypos + ball_a.Yspeed;
 
     //Draw a new white ball
-    draw_rectangle(ball_a.Xpos-ball_a.radius, ball_a.Ypos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white);
+    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white);
  
     //Handle some ball collisions
     if(ball_a.Ypos - ball_a.radius < 0)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
