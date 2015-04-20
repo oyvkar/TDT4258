@@ -12,6 +12,7 @@
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/interrupt.h>
+#include <linux/signal.h>
 #include <linux/uaccess.h>
 #include <linux/poll.h>
 #include <linux/kdev_t.h>
@@ -43,11 +44,11 @@ static struct file_operations fops = {
 	.read = gp_read,
     .write = gp_write,
 	.open = gp_open,
-	.release = gp_release
+	.release = gp_release,
     .fasync = gp_fasync
 };
 	
-static int gp_fasync(int fd, struct file *Filp, int mode) {
+static int gp_fasync(int fd, struct file *filp, int mode) {
     return fasync_helper(fd, filp, mode, &async);
 }
 
