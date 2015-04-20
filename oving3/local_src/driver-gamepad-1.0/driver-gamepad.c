@@ -235,7 +235,7 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t count, lo
     return 1; // Number of bytes written
 }
 
-void button_map(void) {
+static void button_map(void) {
     buttons = "PRESSED: ";
     uint8_t data = ioread8(portc_mem_base + DIN_OFFSET);
     switch(data) {
