@@ -245,85 +245,19 @@ static void button_map(void) {
     char *btn_ptr;
     btn_ptr = &buttons;
 
-    strcpy(data, "ERR");
     data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
- //   printk(KERN_DEBUG "GAMEPAD: mapping buttons\n");
     int i;
     if ( data == 0) {
-        strcpy(data, "NONE");
+        strcpy(buttnos, "NONE\n");
         return;
     }
-    printk(KERN_DEBUG "GAMEPAD: data: %i", data);
     for (i = 0; i < 8; i++) {
         if( data & (1 << i)) {
             sprintf(btn_ptr, "SW%i\t", i+1);
             btn_ptr += 4;
         }
     }
-/*
-    switch(data) {
-        case 0:
-            strcpy(buttons, "NONE");
-            break;
-        case 1:
-            strcpy(buttons, "SW1\t");
-            break;
-        case 2:
-            strcpy(buttons, "SW2\t");
-            break;
-        case 3:
-            strcpy(buttons, "SW1\tSW2\t");
-            break;
-        case 4:
-            strcpy(buttons, "SW3\t");
-            break;
-        case 5:
-            strcpy(buttons, "SW1\tSW3\t");
-            break;
-        case 6:
-            strcpy(buttons, "SW2\tSW3\t");
-            break;
-        case 7:
-            strcpy(buttons, "SW1\tSW2\tSW3\t");
-            break;
-        case 8:
-            strcpy(buttons, "SW4\t");
-            break;
-        case 9:
-            strcpy(buttons, "SW1\tSW4\t");
-            break;
-        case 10:
-            strcpy(buttons, "SW2\tSW4\t");
-            break;
-        case 11:
-            strcpy(buttons, "SW2\tSW4\t");
-            break;
-        case 12:
-            strcpy(buttons, "SW1\tSW2\tSW4\t");
-            break;
-        case 13:
-            strcpy(buttons, "SW3\tSW4\t");
-            break;
-        case 14:
-            strcpy(buttons, "SW1\tSW3\tSW4\t");
-            break;
-        case 15:
-            strcpy(buttons, "SW1\tSW2\tSW3\tSW4\t");
-            break;
-        case 16:
-            strcpy(buttons, "SW5\t");
-            break;
-        case 17:
-            strcpy(buttons, "SW1\tSW5\t");
-            break;
-        case 18:
-            strcpy(buttons, "SW2\tSW5\t");
-            break;
-        default:
-            printk(KERN_DEBUG "GAMEPAD: switchcase failed: %i\n", data);
-            strcpy(buttons, "ERROR");
-        }
-*/
+    btn_ptr = '\n';
 }
 
 
