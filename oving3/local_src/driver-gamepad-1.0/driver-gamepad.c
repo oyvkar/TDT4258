@@ -297,7 +297,7 @@ static void button_map(void) {
             break;
         default:
             printk(KERN_DEBUG "GAMEPAD: switchcase failed\n");
-            strcp(titfuck, "FUCKITYFUCK");
+            strcpy(titfuck, "FUCKITYFUCK");
         }
 }
 
