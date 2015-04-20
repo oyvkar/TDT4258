@@ -180,6 +180,7 @@ void handlePhysics(){
 void initialize(bool first)
 {
     // Starts the game with the ball in the centre of the playfield, and the ball moving towards the player who won the previous round
+    printf("Initializing game\n");
     playfield_a.height = 239;
     playfield_a.width = 319;
     
@@ -255,8 +256,8 @@ void single_color(uint16_t color){
 
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
-    for (i = 0; i < width; i++) {
-        for (j = 0; j < height; j++) {
+    for (i = Xpos; i < width; i++) {
+        for (j = Ypos; j < height; j++) {
             screen[(Xpos+i)*2+(j+Ypos)*640] = color;
         }
     }
