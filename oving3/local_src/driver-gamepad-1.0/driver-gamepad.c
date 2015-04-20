@@ -242,7 +242,7 @@ static void button_map(void) {
     int i;
     for (i = 0; i < 8; i++) {
         if( data && (1 << i)) {
-            sprintf((&buttons + strlen), "SW%i\t", i);
+            sprintf((&buttons + strlen), "SW%i\t", i+1);
             strln += 3;
         }
     }
