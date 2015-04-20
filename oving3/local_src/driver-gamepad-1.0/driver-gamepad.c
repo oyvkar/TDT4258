@@ -256,7 +256,7 @@ static void button_map(void) {
             btn_ptr += 4;
         }
     }
-    btn_ptr = '\n';
+    *(btn_ptr-1) = '\n';
 }
 
 
