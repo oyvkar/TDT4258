@@ -75,7 +75,7 @@ void play(){
        // single_color(rand()%256);
         moveball();
         handlePhysics();
-        sleep(10);  // Value does not represent real time
+        sleep(0.1);  // Value does not represent real time
     }
 }
 
@@ -192,9 +192,9 @@ void initialize(bool first)
     ball_a.Ypos = 119;  //Starts the ball in the centre
     ball_a.Xpos = 159;
 
-    playerbat_a.length = 60;
+    playerbat_a.length = 180;
     playerbat_a.width = 15;
-    playerbat_b.length = 60;
+    playerbat_b.length = 180;
     playerbat_b.width = 15;
     playerbat_a.Xpos = 20;
     playerbat_a.Ypos = 119;
