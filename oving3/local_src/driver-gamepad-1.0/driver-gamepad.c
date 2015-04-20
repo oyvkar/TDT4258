@@ -256,8 +256,8 @@ static void button_map(void) {
 
     for (i = 0; i < 8; i++) {
         if( data && (1 << i)) {
-            sprintf((buttons + strl), "SW%i\t", i+1);
-            btnptr += 4;
+            sprintf((btn_ptr, "SW%i\t", i+1);
+            btn_ptr += 4;
         }
     }
 /*
