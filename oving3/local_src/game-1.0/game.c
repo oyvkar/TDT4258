@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
     play();
+    printf("Done playing \n");
 	exit(EXIT_SUCCESS);
     return 0;
 }
