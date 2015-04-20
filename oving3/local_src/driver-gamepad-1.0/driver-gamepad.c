@@ -243,7 +243,7 @@ static void button_map(void) {
     uint8_t data;
     uint8_t strl;
     char *btn_ptr;
-    btn_ptr = buttons;
+    btn_ptr = &buttons;
 
     strcpy(data, "ERR");
     data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
@@ -256,7 +256,7 @@ static void button_map(void) {
 
     for (i = 0; i < 8; i++) {
         if( data && (1 << i)) {
-            sprintf((btn_ptr, "SW%i\t", i+1);
+            sprintf(btn_ptr, "SW%i\t", i+1);
             btn_ptr += 4;
         }
     }
