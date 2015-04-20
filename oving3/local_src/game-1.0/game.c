@@ -11,7 +11,6 @@
 #include <unistd.h>
 
 #include "game.h"
-//Mangler muligens includes her...
 
 
 //Game variables
@@ -75,6 +74,9 @@ void play(){
        // single_color(rand()%256);
         moveball();
         handlePhysics();
+        draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white);
+        draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white);
+   
         sleep(0.01);  // Value does not represent real time
     }
 }
@@ -84,40 +86,40 @@ void movebat(int input){
         case 0: //Move left bat up
             if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
+                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos --;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);
+                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);
             }
             break;
         case 1: //Move left bat down
             if (playerbat_a.Ypos + playerbat_a.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
+                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos ++;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);            }
+                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);            }
             break;
         case 2: //Move right bat up
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);
+                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos --;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
+                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
             break;
         case 3: //Move right bat down
             if (playerbat_b.Ypos + playerbat_b.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);  
+                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);  
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos ++;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
+                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
             }
             break;
         default:
@@ -184,7 +186,7 @@ void initialize(bool first)
     playfield_a.height = 239;
     playfield_a.width = 319;
     
-    ball_a.radius = 10;
+    ball_a.radius = 5;
     
     ball_a.Xspeed = 2;
     if(rand()%2 == 0)ball_a.Xspeed = -ball_a.Xspeed;
@@ -192,9 +194,9 @@ void initialize(bool first)
     ball_a.Ypos = 119;  //Starts the ball in the centre
     ball_a.Xpos = 159;
 
-    playerbat_a.length = 180;
+    playerbat_a.length = 110;
     playerbat_a.width = 15;
-    playerbat_b.length = 180;
+    playerbat_b.length = 110;
     playerbat_b.width = 15;
     playerbat_a.Xpos = 20;
     playerbat_a.Ypos = 119;
@@ -265,3 +267,5 @@ void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     }
     update_screen();
 }
+
+
