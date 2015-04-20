@@ -72,11 +72,8 @@ void play(){
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
         //TODO:
         //Handle Inputs
-    //    if(input == upLeft) movebat(0);
-    //    if (input == downLeft) movebat(1);
-    //    if(input == upRight) movebat(2);
-    //    if(input == downRight) movebat(3);
        // single_color(rand()%256);
+        movebat();
         moveball();
         handlePhysics();
         draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
@@ -87,47 +84,34 @@ void play(){
     close_controller();
 }
 
-void movebat(int input){
-    switch (input) {
-        case 0: //Move left bat up
+void movebat(void){
+    switch (input_a) {
+        case 1: //Move left bat up
             if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
-                //Draw a black rectangle to erase the previous position
-                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
-                playerbat_a.oldYpos = playerbat_a.Ypos;
+               playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos --;
-                //Draw a white rectangle a the new position
-                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);
-            }
+           }
             break;
-        case 1: //Move left bat down
+        case 2: //Move left bat down
             if (playerbat_a.Ypos + playerbat_a.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                
-                //Draw a black rectangle to erase the previous position
-                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
-                playerbat_a.oldYpos = playerbat_a.Ypos;
+               playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos ++;
-                //Draw a white rectangle a the new position
-                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);  
-                }
+               }
             break;
-        case 2: //Move right bat up
-                //Draw a black rectangle to erase the previous position
-                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);
+        default:
+            break
+    }
+    switch (input_b) {
+        case 1: //Move right bat up
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos --;
-                //Draw a white rectangle a the new position
-                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
-            break;
-        case 3: //Move right bat down
+           break;
+        case 2: //Move right bat down
             if (playerbat_b.Ypos + playerbat_b.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
-               
-                //Draw a black rectangle to erase the previous position
-                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);  
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos ++;
-                //Draw a white rectangle a the new position
-                //draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
-            }
+           }
             break;
         default:
             break;

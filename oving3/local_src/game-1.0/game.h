@@ -2,7 +2,7 @@
 #define GAME_H
 
 void play();
-void movebat(int input);
+void movebat();
 void moveball();
 void handlePhysics();
 void initialize(bool first);
