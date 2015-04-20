@@ -147,7 +147,6 @@ void moveball(){
 }
 
 void handlePhysics(){
-    char tempstring[10];
     if (ball_a.Xpos -ball_a.radius <= 2) {   //Checks if the ball hits the bat
         if (ball_a.Ypos > playerbat_a.Ypos && ball_a.Ypos < playerbat_a.Ypos + playerbat_a.length) {
             ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
@@ -243,17 +242,18 @@ void update_screen(){
     ioctl(fd,0x4680,&rect);
     return;
 }
-
 void single_color(uint16_t color){
-    for (int i = 0; i < 320*260; i++) {
+    int i;
+    for (i = 0; i < 320*260; i++) {
         screen[i] = color;
     }
     update_screen();
 }
 
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
-    for (int i = 0; i < width; i++) {
-        for (int j = 0; j < height; j++) {
+    int i, j;
+    for (i = 0; i < width; i++) {
+        for (j = 0; j < height; j++) {
             screen[(Xpos+i)*2+(j+Ypos)*640] = color;
         }
     }
