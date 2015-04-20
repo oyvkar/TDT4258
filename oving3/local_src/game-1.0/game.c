@@ -50,7 +50,7 @@ struct score{
     int playerBscore;
 }gamescore;
 
-uint16_t white = 255;
+uint16_t white = 0xFFFF;
 uint16_t black = 0;
 
 
