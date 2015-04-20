@@ -75,7 +75,7 @@ void play(){
 
         moveball();
         handlePhysics();
-        Sleep(0.1);
+        sleep(0.1);
     }
 }
 
