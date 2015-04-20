@@ -36,7 +36,7 @@ static int driverOpen = 0;
 
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
-//	.llseek = gamepad_llseek,
+	.llseek = noop_llseek,
 	.read = my_read,
     .write = my_write,
 //	.mmap = gamepad_map,
