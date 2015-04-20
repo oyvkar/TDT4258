@@ -74,6 +74,7 @@ void play(){
         //Handle Inputs
        // single_color(rand()%256);
         movebat();
+        printf("%i %i \n", input_a, input_b);
         moveball();
         handlePhysics();
         draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
