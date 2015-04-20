@@ -147,8 +147,8 @@ void moveball(){
     draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white,false);
  
     //Handle some ball collisions
-    if(ball_a.Ypos - ball_a.radius < 15)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
-    if(ball_a.Ypos + ball_a.radius > playfield_a.height - 15)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
+    if(ball_a.Ypos + ball_a.radius < 15)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
+    if(ball_a.Ypos - ball_a.radius > playfield_a.height - 15)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
 }
 
 void handlePhysics(){
