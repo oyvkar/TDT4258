@@ -212,8 +212,6 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
     
     /* Number of bytes actually written to the buffer */
    int bytes_read = 0;
-   char bla[] = "afgagagaSG";
-   msg_ptr = bla;
    /* If we're at the end of the message, return 0 signifying end of file */
    if (*msg_ptr == 0) return 0;
 
@@ -238,9 +236,10 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 static void button_map(void) {
     int fuck;
     fuck = ioread8(gpio_portc_mem + DIN_OFFSET);
+    printk(KERN_DEBUG "GAMEPAD: mapping buttons\n");
     switch(fuck) {
         case 0:
-            strcpy(titfuck, "fuck");
+            strcpy(titfuck, "NONE");
             break;
         case 1:
             strcpy(titfuck, "SW1\t");
@@ -296,6 +295,9 @@ static void button_map(void) {
         case 18:
             strcpy(titfuck, "SW2\tSW5\t");
             break;
+        default:
+            printk(KERN_DEBUG "GAMEPAD: switchcase failed\n");
+            strcp(titfuck, "FUCKITYFUCK");
         }
 }
 
