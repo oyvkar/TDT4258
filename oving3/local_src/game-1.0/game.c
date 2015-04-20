@@ -154,7 +154,8 @@ void moveball(){
 void handlePhysics(){
     if (ball_a.Xpos - ball_a.radius <= 30) {   //Checks if the ball hits the bat
         printf("Ball YPOS: %i\tBat YPOS: %i\tBat len: %i\n", ball_a.Ypos, playerbat_a.Ypos, playerbat_a.length);
-        if ((ball_a.Ypos < playerbat_a.Ypos) && (ball_a.Ypos > (playerbat_a.Ypos + playerbat_a.length))) {
+       // if ((ball_a.Ypos < playerbat_a.Ypos) && (ball_a.Ypos > (playerbat_a.Ypos + playerbat_a.length))) {
+       if ((playerbat_a.Ypos <= ball_a.Ypos) && (ball_a.Ypos <= (playerbat_a.Ypos + playerbat_a.length)))  {
             ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
             ball_a.Yspeed = rand()%4;//Random Y speed
             if(rand()%2 == 0)ball_a.Yspeed = -ball_a.Yspeed;//Random Y direction
