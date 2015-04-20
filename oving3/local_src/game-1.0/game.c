@@ -7,6 +7,8 @@
 #include <linux/fb.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <time.h>
+
 
 #include "game.h"
 //Mangler muligens includes her...
@@ -73,7 +75,7 @@ void play(){
 
         moveball();
         handlePhysics();
-
+        Sleep(0.1);
     }
 }
 
@@ -203,8 +205,8 @@ void initialize(bool first)
     if(first){
         gamescore.playerAscore = 0;
         gamescore.playerBscore = 0;
+        initialize_screen();//Initializes the screen
     }
-    initialize_screen();//Initializes the screen
     single_color(0);//sets the playfield to black
 }
 
