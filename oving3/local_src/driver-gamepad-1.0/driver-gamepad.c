@@ -235,66 +235,65 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 }
 
 static void button_map(void) {
-    titfuck = "PRESSED: ";
     int fuck;
     fuck = ioread8(gpio_portc_mem + DIN_OFFSET);
     switch(fuck) {
         case 0:
-            titfuck[8] = "";
+            titfuck = "";
             break;
         case 1:
-            titfuck[8] = "SW1\t";
+            titfuck = "SW1\t";
             break;
         case 2:
-            titfuck[8] = "SW2\t";
+            titfuck = "SW2\t";
             break;
         case 3:
-            titfuck[8] = "SW1\tSW2\t";
+            titfuck = "SW1\tSW2\t";
             break;
         case 4:
-            titfuck[8] = "SW3\t";
+            titfuck = "SW3\t";
             break;
         case 5:
-            titfuck[8] = "SW1\tSW3\t";
+            titfuck = "SW1\tSW3\t";
             break;
         case 6:
-            titfuck[8] = "SW2\tSW3\t";
+            titfuck = "SW2\tSW3\t";
             break;
         case 7:
-            titfuck[8] = "SW1\tSW2\tSW3\t";
+            titfuck = "SW1\tSW2\tSW3\t";
             break;
         case 8:
-            titfuck[8] = "SW4\t";
+            titfuck = "SW4\t";
             break;
         case 9:
-            titfuck[8] = "SW1\tSW4\t";
+            titfuck = "SW1\tSW4\t";
             break;
         case 10:
-            titfuck[8] = "SW2\tSW4\t";
+            titfuck = "SW2\tSW4\t";
             break;
         case 11:
-            titfuck[8] = "SW2\tSW4\t";
+            titfuck = "SW2\tSW4\t";
             break;
         case 12:
-            titfuck[8] = "SW1\tSW2\tSW4\t";
+            titfuck = "SW1\tSW2\tSW4\t";
             break;
         case 13:
-            titfuck[8] = "SW3\tSW4\t";
+            titfuck = "SW3\tSW4\t";
             break;
         case 14:
-            titfuck[8] = "SW1\tSW3\tSW4\t";
+            titfuck = "SW1\tSW3\tSW4\t";
             break;
         case 15:
-            titfuck[8] = "SW1\tSW2\tSW3\tSW4\t";
+            titfuck = "SW1\tSW2\tSW3\tSW4\t";
             break;
         case 16:
-            titfuck[8] = "SW5\t";
+            titfuck = "SW5\t";
             break;
         case 17:
-            titfuck[8] = "SW1\tSW5\t";
+            titfuck = "SW1\tSW5\t";
             break;
         case 18:
-            titfuck[8] = "SW2\tSW5\t";
+            titfuck = "SW2\tSW5\t";
             break;
         }
     msg_ptr = titfuck;
