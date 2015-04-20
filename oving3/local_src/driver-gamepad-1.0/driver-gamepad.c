@@ -47,8 +47,8 @@ static struct file_operations fops = {
 	.read = gp_read,
     .write = gp_write,
 	.open = gp_open,
-	.release = gp_release,
-    .fasync = gp_fasync
+	.release = gp_release
+   // .fasync = gp_fasync
 };
 	
 
