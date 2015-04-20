@@ -236,64 +236,65 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t count, lo
 }
 
 void button_map(void) {
+    buttons = "PRESSED: ";
     uint8_t data = ioread8(portc_mem_base + DIN_OFFSET);
     switch(data) {
         case 0:
-            buttons = "";
+            buttons[8] = "";
             break;
         case 1:
-            buttons = "SW1\n";
+            buttons[8] = "SW1\t";
             break;
         case 2:
-            buttons = "SW2\n";
+            buttons[8] = "SW2\t";
             break;
         case 3:
-            buttons = "SW1\nSW2\n";
+            buttons[8] = "SW1\tSW2\t";
             break;
         case 4:
-            buttons = "SW3\n";
+            buttons[8] = "SW3\t";
             break;
         case 5:
-            buttons = "SW1\nSW3\n";
+            buttons[8] = "SW1\tSW3\t";
             break;
         case 6:
-            buttons = "SW2\nSW3\n";
+            buttons[8] = "SW2\tSW3\t";
             break;
         case 7:
-            buttons = "SW1\nSW2\nSW3\";
+            buttons[8] = "SW1\tSW2\tSW3\t";
             break;
         case 8:
-            buttons = "SW4\n";
+            buttons[8] = "SW4\t";
             break;
         case 9:
-            buttons = "SW1\nSW4\n";
+            buttons[8] = "SW1\tSW4\t";
             break;
         case 10:
-            buttons = "SW2\nSW4\n";
+            buttons[8] = "SW2\tSW4\t";
             break;
         case 11:
-            buttons = "SW2\nSW4\n";
+            buttons[8] = "SW2\tSW4\t";
             break;
         case 12:
-            buttons = "SW1\nSW2\nSW4\n";
+            buttons[8] = "SW1\tSW2\tSW4\t";
             break;
         case 13:
-            buttons = "SW3\nSW4\n";
+            buttons[8] = "SW3\tSW4\t";
             break;
         case 14:
-            buttons = "SW1\nSW3\nSW4\n";
+            buttons[8] = "SW1\tSW3\tSW4\t";
             break;
         case 15:
-            buttons = "SW1\nSW2\nSW3\nSW4\n";
+            buttons[8] = "SW1\tSW2\tSW3\tSW4\t";
             break;
         case 16:
-            buttons = "SW5\n";
+            buttons[8] = "SW5\t";
             break;
         case 17:
-            buttons = "SW1\nSW5\n";
+            buttons[8] = "SW1\tSW5\t";
             break;
         case 18:
-            buttons = "SW2\N\SW5\n";
+            buttons[8] = "SW2\t\SW5\t";
             break;
         }
     msg_ptr = buttons;
