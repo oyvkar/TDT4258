@@ -50,7 +50,7 @@ struct score{
     int playerBscore;
 }gamescore;
 
-uint16_t white = 150;
+uint16_t white = 0xffff;
 uint16_t black = 0;
 
 
@@ -257,7 +257,7 @@ void single_color(uint16_t color){
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
     for (i = Xpos; i < width + Xpos; i++) {
-        for (j = Ypos; j < height + Ypos; j--) {
+        for (j = Ypos; j < height + Ypos; j++) {
             screen[i+j*320] = color;
         }
     }
