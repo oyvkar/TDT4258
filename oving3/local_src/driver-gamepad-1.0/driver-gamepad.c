@@ -237,9 +237,9 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 
 static void button_map(void) {
     buttons = "PRESSED: ";
-    int data;
-    data = ioread8(gpio_portc_mem + DIN_OFFSET);
-    switch(data) {
+    int fuck;
+    fuck = ioread8(gpio_portc_mem + DIN_OFFSET);
+    switch(fuck) {
         case 0:
             buttons[8] = "";
             break;
