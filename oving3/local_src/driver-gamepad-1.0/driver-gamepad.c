@@ -19,6 +19,7 @@
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/siginfo.h>
+
 #include "efm32gg.h"
 #include "driver-gamepad.h"i
 
@@ -26,23 +27,28 @@
 #define SUCCESS 0
 dev_t devNumber;
 unsigned int devCount = 1;
-struct cdev *titfuck_cdev;
+struct cdev *buttons_cdev;
 struct class *cl;
 void __iomem *gpio_porta_mem;
 void __iomem *gpio_portc_mem;
 void __iomem *gpio_int_mem;
 static int driverOpen = 0;
-char titfuck[33];
+char buttons[33];
 char *msg_ptr;
+
+
+static int gp_fasync(int fd, struct file *Filp, int mode) {
+    return 0;
+}
 
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
 	.llseek = noop_llseek,
-	.read = my_read,
-    .write = my_write,
-//	.mmap = gamepad_map,
-	.open = gamepad_open,
-	.release = gamepad_release,
+	.read = gp_read,
+    .write = gp_write,
+	.open = gp_open,
+	.release = gp_release
+   // .fasync = gp_fasync
 };
 	
 
@@ -52,12 +58,12 @@ static int __init gamepad_driver_init(void)
 	printk("Hello World, here is your module speaking\n");
 
 	// Create chardevice and device node
-    if( alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_titfuck") < 0){
+    if( alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_buttons") < 0){
 		printk(KERN_ERR "GAMEPAD: Character device region allocation FAILED, returning.\n");
 		return -1;
 	}
-	cl = class_create(THIS_MODULE, "GPIO_titfuck");
-	device_create(cl,NULL,devNumber, NULL, "GPIO_titfuck");
+	cl = class_create(THIS_MODULE, "GPIO_buttons");
+	device_create(cl,NULL,devNumber, NULL, "GPIO_buttons");
 	
 
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
@@ -118,13 +124,13 @@ static int __init gamepad_driver_init(void)
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	printk(KERN_DEBUG "GAMEPAD:Setting up IRQi 17\n");
-	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_titfuck", NULL) < 0)
+	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
     printk(KERN_DEBUG "GAMEPAD:Setting up IRQ 18\n");
-    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_titfuck", NULL) < 0)
+    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 2 request FAILED, returning \n");
 		return -1;
@@ -136,10 +142,10 @@ static int __init gamepad_driver_init(void)
     
 	//Activate driver and register allocations
     printk(KERN_DEBUG "GAMEPAD:Activating character device\n");
-    titfuck_cdev = cdev_alloc();
-	titfuck_cdev->owner = THIS_MODULE;
-	titfuck_cdev->ops = &fops;
-	if(cdev_add(titfuck_cdev,devNumber, devCount) < 0)
+    buttons_cdev = cdev_alloc();
+	buttons_cdev->owner = THIS_MODULE;
+	buttons_cdev->ops = &fops;
+	if(cdev_add(buttons_cdev,devNumber, devCount) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: Char device activation failed, returning\n");
 		return -1;
@@ -153,7 +159,7 @@ static void __exit gamepad_driver_cleanup(void)
 {
 	//Deactivate driver
 	printk(KERN_DEBUG "GAMEPAD:GAMEPAD: Deactivate driver\n");
-	cdev_del(titfuck_cdev);
+	cdev_del(buttons_cdev);
 	//Free even and odd interrupts
 	free_irq(17,NULL);
 	free_irq(18,NULL);
@@ -189,26 +195,26 @@ static void __exit gamepad_driver_cleanup(void)
 /* Functions for using the gamepad from userspace */
 
 // Userspace program opens driver
-static int gamepad_open(struct inode *inode,struct file *file){
+static int gp_open(struct inode *inode,struct file *file){
     if (driverOpen) {
         return -EBUSY;
     }
 
     try_module_get(THIS_MODULE); // Prevent module unloading while in use
-    msg_ptr = titfuck;
+    msg_ptr = buttons;
     driverOpen++;
     return SUCCESS; //Configuration handled by the module_init
 }
 
 // Userspace program closes driver
-static int gamepad_release(struct inode *inode, struct file *file){
+static int gp_release(struct inode *inode, struct file *file){
     driverOpen--;
     module_put(THIS_MODULE); // Allow module unloading
     return SUCCESS; //Configuration handled by the module_exit
 }
 
 // user program reads from the driver
-static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, loff_t *offp){
+static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, loff_t *offp){
     
     /* Number of bytes actually written to the buffer */
    int bytes_read = 0;
@@ -234,84 +240,103 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 }
 
 static void button_map(void) {
-    int fuck;
-    fuck = ~ioread8(gpio_portc_mem + DIN_OFFSET);
-    printk(KERN_DEBUG "GAMEPAD: mapping buttons\n");
-    switch(fuck) {
+    uint8_t data;
+    uint8_t strl;
+    char *btn_ptr;
+    btn_ptr = buttons;
+
+    strcpy(data, "ERR");
+    data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
+ //   printk(KERN_DEBUG "GAMEPAD: mapping buttons\n");
+    int i;
+    if ( data == 0) {
+        strcpy(data, "NONE");
+        return;
+    }
+
+    for (i = 0; i < 8; i++) {
+        if( data && (1 << i)) {
+            sprintf((btn_ptr, "SW%i\t", i+1);
+            btn_ptr += 4;
+        }
+    }
+/*
+    switch(data) {
         case 0:
-            strcpy(titfuck, "NONE");
+            strcpy(buttons, "NONE");
             break;
         case 1:
-            strcpy(titfuck, "SW1\t");
+            strcpy(buttons, "SW1\t");
             break;
         case 2:
-            strcpy(titfuck, "SW2\t");
+            strcpy(buttons, "SW2\t");
             break;
         case 3:
-            strcpy(titfuck, "SW1\tSW2\t");
+            strcpy(buttons, "SW1\tSW2\t");
             break;
         case 4:
-            strcpy(titfuck, "SW3\t");
+            strcpy(buttons, "SW3\t");
             break;
         case 5:
-            strcpy(titfuck, "SW1\tSW3\t");
+            strcpy(buttons, "SW1\tSW3\t");
             break;
         case 6:
-            strcpy(titfuck, "SW2\tSW3\t");
+            strcpy(buttons, "SW2\tSW3\t");
             break;
         case 7:
-            strcpy(titfuck, "SW1\tSW2\tSW3\t");
+            strcpy(buttons, "SW1\tSW2\tSW3\t");
             break;
         case 8:
-            strcpy(titfuck, "SW4\t");
+            strcpy(buttons, "SW4\t");
             break;
         case 9:
-            strcpy(titfuck, "SW1\tSW4\t");
+            strcpy(buttons, "SW1\tSW4\t");
             break;
         case 10:
-            strcpy(titfuck, "SW2\tSW4\t");
+            strcpy(buttons, "SW2\tSW4\t");
             break;
         case 11:
-            strcpy(titfuck, "SW2\tSW4\t");
+            strcpy(buttons, "SW2\tSW4\t");
             break;
         case 12:
-            strcpy(titfuck, "SW1\tSW2\tSW4\t");
+            strcpy(buttons, "SW1\tSW2\tSW4\t");
             break;
         case 13:
-            strcpy(titfuck, "SW3\tSW4\t");
+            strcpy(buttons, "SW3\tSW4\t");
             break;
         case 14:
-            strcpy(titfuck, "SW1\tSW3\tSW4\t");
+            strcpy(buttons, "SW1\tSW3\tSW4\t");
             break;
         case 15:
-            strcpy(titfuck, "SW1\tSW2\tSW3\tSW4\t");
+            strcpy(buttons, "SW1\tSW2\tSW3\tSW4\t");
             break;
         case 16:
-            strcpy(titfuck, "SW5\t");
+            strcpy(buttons, "SW5\t");
             break;
         case 17:
-            strcpy(titfuck, "SW1\tSW5\t");
+            strcpy(buttons, "SW1\tSW5\t");
             break;
         case 18:
-            strcpy(titfuck, "SW2\tSW5\t");
+            strcpy(buttons, "SW2\tSW5\t");
             break;
         default:
-            printk(KERN_DEBUG "GAMEPAD: switchcase failed: %i\n", fuck);
-            strcpy(titfuck, "FUCKITYFUCK");
+            printk(KERN_DEBUG "GAMEPAD: switchcase failed: %i\n", data);
+            strcpy(buttons, "ERROR");
         }
+*/
 }
 
 
 //user program writes to the driver
-static ssize_t my_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
+static ssize_t gp_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
     return SUCCESS; //Not used as we do not want to write to the LEDs on the gamepad
 }
 
 static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
     
     // Clear interrupt flags
-    iowrite32(0xffff, gpio_int_mem + IFC_OFFSET);
-    printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
+    iowrite32(0xFF, gpio_int_mem + IFC_OFFSET);
+ //   printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
     button_map();
     return (irq_handler_t) IRQ_HANDLED; 
 }
