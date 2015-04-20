@@ -75,7 +75,7 @@ void play(){
        // single_color(rand()%256);
         moveball();
         handlePhysics();
-        sleep(0.05);  // Value does not represent real time
+        sleep(0.01);  // Value does not represent real time
     }
 }
 
@@ -257,7 +257,7 @@ void single_color(uint16_t color){
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
     for (i = Xpos; i < width + Xpos; i++) {
-        for (j = Ypos; j < height + Ypos; j++) {
+        for (j = height + Ypos; j < Ypos; j--) {
             screen[i+j*320] = color;
         }
     }
