@@ -158,7 +158,7 @@ static int __init gamepad_driver_init(void)
 static void __exit gamepad_driver_cleanup(void)
 {
 	//Deactivate driver
-	printk(KERN_DEBUG "GAMEPAD:GAMEPAD: Deactivate driver\n");
+	printk(KERN_DEBUG "GAMEPAD: Deactivate driver\n");
 	cdev_del(buttons_cdev);
 	//Free even and odd interrupts
 	free_irq(17,NULL);
@@ -256,7 +256,7 @@ static void button_map(void) {
             btn_ptr += 4;
         }
     }
-    *btn_ptr-3 = '\n';
+    *btn_ptr = '\n';
 }
 
 
