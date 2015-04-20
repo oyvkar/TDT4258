@@ -19,7 +19,6 @@
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/siginfo.h>
-#include <stdio.h>
 
 #include "efm32gg.h"
 #include "driver-gamepad.h"i
