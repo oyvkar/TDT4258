@@ -237,7 +237,8 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 
 static void button_map(void) {
     buttons = "PRESSED: ";
-    uint8_t data = ioread8(gpio_portc_mem + DIN_OFFSET);
+    uint8_t data;
+    data = ioread8(gpio_portc_mem + DIN_OFFSET);
     switch(data) {
         case 0:
             buttons[8] = "";
@@ -294,7 +295,7 @@ static void button_map(void) {
             buttons[8] = "SW1\tSW5\t";
             break;
         case 18:
-            buttons[8] = "SW2\t\SW5\t";
+            buttons[8] = "SW2\tSW5\t";
             break;
         }
     msg_ptr = buttons;
@@ -311,7 +312,7 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
     // Clear interrupt flags
     iowrite32(0xffff, gpio_int_mem + IFC_OFFSET);
     printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
-    button_map;
+    button_map();
     return (irq_handler_t) IRQ_HANDLED; 
 }
 
