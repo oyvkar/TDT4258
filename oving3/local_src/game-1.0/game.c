@@ -152,7 +152,7 @@ void moveball(){
 }
 
 void handlePhysics(){
-    if (ball_a.Xpos -ball_a.radius <= 15) {   //Checks if the ball hits the bat
+    if (ball_a.Xpos - ball_a.radius <= 35) {   //Checks if the ball hits the bat
         if (ball_a.Ypos > playerbat_a.Ypos || ball_a.Ypos < (playerbat_a.Ypos + playerbat_a.length)) {
             ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
             ball_a.Yspeed = rand()%4;//Random Y speed
@@ -164,7 +164,7 @@ void handlePhysics(){
         }
         return;
     }
-    if (ball_a.Xpos -ball_a.radius >= 307) {   //Checks if the ball hits the bat
+    if (ball_a.Xpos + ball_a.radius >= 285) {   //Checks if the ball hits the bat
             if (ball_a.Ypos > playerbat_b.Ypos || ball_a.Ypos <( playerbat_b.Ypos + playerbat_b.length)) {
                 ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
                 ball_a.Yspeed = rand()%4;//Random Y speed
@@ -188,15 +188,15 @@ void initialize(bool first)
     
     ball_a.radius = 5;
     
-    ball_a.Xspeed = 2;
+    ball_a.Xspeed = 6;
     if(rand()%2 == 0)ball_a.Xspeed = -ball_a.Xspeed;
     ball_a.Yspeed = 0;
     ball_a.Ypos = 119;  //Starts the ball in the centre
     ball_a.Xpos = 159;
 
-    playerbat_a.length = 110;
+    playerbat_a.length = 90;
     playerbat_a.width = 15;
-    playerbat_b.length = 110;
+    playerbat_b.length = 90;
     playerbat_b.width = 15;
     playerbat_a.Xpos = 20;
     playerbat_a.Ypos = 119;
