@@ -72,7 +72,7 @@ void play(){
     //    if (input == downLeft) movebat(1);
     //    if(input == upRight) movebat(2);
     //    if(input == downRight) movebat(3);
-
+        single_color(rand()%256);
         moveball();
         handlePhysics();
         sleep(10);  // Value does not represent real time
