@@ -75,7 +75,7 @@ void play(){
 
         moveball();
         handlePhysics();
-        sleep(0.1);
+        sleep(1);
     }
 }
 
@@ -183,21 +183,21 @@ void initialize(bool first)
     playfield_a.height = 239;
     playfield_a.width = 319;
     
-    ball_a.radius = 3;
+    ball_a.radius = 10;
     
-    ball_a.Xspeed = 4;
+    ball_a.Xspeed = 2;
     if(rand()%2 == 0)ball_a.Xspeed = -ball_a.Xspeed;
     ball_a.Yspeed = 0;
     ball_a.Ypos = 119;  //Starts the ball in the centre
     ball_a.Xpos = 159;
 
-    playerbat_a.length = 30;
-    playerbat_a.width = 3;
-    playerbat_b.length = 30;
-    playerbat_b.width = 3;
-    playerbat_a.Xpos = 5;
+    playerbat_a.length = 60;
+    playerbat_a.width = 15;
+    playerbat_b.length = 60;
+    playerbat_b.width = 15;
+    playerbat_a.Xpos = 20;
     playerbat_a.Ypos = 119;
-    playerbat_b.Xpos = 314;
+    playerbat_b.Xpos = 300;
     playerbat_b.Ypos = 119;
     playerbat_a.speed = 5;
     playerbat_b.speed = 5;
