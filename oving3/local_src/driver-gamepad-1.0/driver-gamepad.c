@@ -33,6 +33,8 @@ void __iomem *gpio_porta_mem;
 void __iomem *gpio_portc_mem;
 void __iomem *gpio_int_mem;
 static int driverOpen = 0;
+static char buttons[33];
+static char *msg_ptr;
 
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
@@ -100,7 +102,9 @@ static int __init gamepad_driver_init(void)
 
 
     printk(KERN_DEBUG "GAMEPAD:Config interrupt and GIPO\n");
-	// Set pint 0-7 as input
+    // Set Porta A Pin 12, 13 and 14 as output
+    
+	// Set Port C pin 0-7 as input
     iowrite32(0x33333333,   gpio_portc_mem + MODEL_OFFSET );
     // Set internal pullup
     iowrite32(0xff, 	gpio_portc_mem + DOUT_OFFSET);
@@ -192,6 +196,7 @@ static int gamepad_open(struct inode *inode,struct file *file){
     }
 
     try_module_get(THIS_MODULE); // Prevent module unloading while in use
+    msg_ptr = buttons;
     driverOpen++;
     return SUCCESS; //Configuration handled by the module_init
 }
@@ -204,12 +209,96 @@ static int gamepad_release(struct inode *inode, struct file *file){
 }
 
 // user program reads from the driver
-static ssize_t my_read (struct file *filp, char __user *buff, size_t count, loff_t *offp){
-    uint8_t data = ioread8(GPIO_PC_DIN);
-    copy_to_user(buff, &data, 8);
+static ssize_t my_read (struct file *filp, char __user *buffer, size_t count, loff_t *offp){
+    
+    /* Number of bytes actually written to the buffer */
+   int bytes_read = 0;
 
-    return SUCCESS;
+   /* If we're at the end of the message, return 0 signifying end of file */
+   if (*msg_Ptr == 0) return 0;
+
+   /* Actually put the data into the buffer */
+   while (length && *msg_Ptr)  {
+
+        /* The buffer is in the user data segment, not the kernel segment;
+         * assignment won't work.  We have to use put_user which copies data from
+         * the kernel data segment to the user data segment. */
+         put_user(*(msg_ptr++), buffer++);
+
+         length--;
+         bytes_read++;
+   }
+
+   /* Most read functions return the number of bytes put into the buffer */
+   return bytes_read;
+
+    return 1; // Number of bytes written
 }
+
+void button_map(void) {
+    uint8_t data = ioread8(portc_mem_base + DIN_OFFSET);
+    switch(data) {
+        case 0:
+            buttons = "";
+            break;
+        case 1:
+            buttons = "SW1\n";
+            break;
+        case 2:
+            buttons = "SW2\n";
+            break;
+        case 3:
+            buttons = "SW1\nSW2\n";
+            break;
+        case 4:
+            buttons = "SW3\n";
+            break;
+        case 5:
+            buttons = "SW1\nSW3\n";
+            break;
+        case 6:
+            buttons = "SW2\nSW3\n";
+            break;
+        case 7:
+            buttons = "SW1\nSW2\nSW3\";
+            break;
+        case 8:
+            buttons = "SW4\n";
+            break;
+        case 9:
+            buttons = "SW1\nSW4\n";
+            break;
+        case 10:
+            buttons = "SW2\nSW4\n";
+            break;
+        case 11:
+            buttons = "SW2\nSW4\n";
+            break;
+        case 12:
+            buttons = "SW1\nSW2\nSW4\n";
+            break;
+        case 13:
+            buttons = "SW3\nSW4\n";
+            break;
+        case 14:
+            buttons = "SW1\nSW3\nSW4\n";
+            break;
+        case 15:
+            buttons = "SW1\nSW2\nSW3\nSW4\n";
+            break;
+        case 16:
+            buttons = "SW5\n";
+            break;
+        case 17:
+            buttons = "SW1\nSW5\n";
+            break;
+        case 18:
+            buttons = "SW2\N\SW5\n";
+            break;
+        }
+    msg_ptr = buttons;
+}
+
 
 //user program writes to the driver
 static ssize_t my_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
@@ -221,6 +310,7 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
     // Clear interrupt flags
     iowrite32(0xffff, gpio_int_mem + IFC_OFFSET);
     printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
+    button_map;
     return (irq_handler_t) IRQ_HANDLED; 
 }
 
