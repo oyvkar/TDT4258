@@ -36,6 +36,11 @@ static int driverOpen = 0;
 char buttons[33];
 char *msg_ptr;
 
+
+static int gp_fasync(int fd, struct file *Filp, int mode) {
+    return 0;
+}
+
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
 	.llseek = noop_llseek,
