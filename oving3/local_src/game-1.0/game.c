@@ -100,7 +100,7 @@ void movebat(void){
                }
             break;
         default:
-            break
+            break;
     }
     switch (input_b) {
         case 1: //Move right bat up
