@@ -5,39 +5,42 @@
 #include <sys/ioctl.h>
 #include <math.h>
 #include <linux/fb.h>
+#include <fcntl.h>
+#include <stdbool.h>
 
-//Mangler masse includes her...
+#include "game.h"
+//Mangler muligens includes her...
 
 
 //Game variables
 struct playfield{
-    uint32_t height;
-    uint32_t width;
+    uint16_t height; //Using uint16 here to be on the safe side, some of these could be uint8 to reduce memory strain
+    uint16_t width;
 }playfield_a;
 
 struct playerbat{
-    uint32_t length;
-    uint32_t width;
-    uint32_t speed;   // How many pixels the bat
+    uint16_t length;
+    uint16_t width;
+    uint16_t speed;   
     
 
-    uint32_t oldXpos;
-    uint32_t oldYpos;
+    uint16_t oldXpos;
+    uint16_t oldYpos;
 
-    uint32_t Xpos;
-    uint32_t Ypos;
+    uint16_t Xpos;
+    uint16_t Ypos;
 }playerbat_a,playerbat_b;
 
 struct ball{
-    uint32_t radius;
+    uint16_t radius;
 
-    uint32_t Xspeed;
-    uint32_t Yspeed;
+    uint16_t Xspeed;
+    uint16_t Yspeed;
     
-    uint32_t oldXpos;
-    uint32_t oldYpos;
-    uint32_t Xpos;
-    uint32_t Ypos;
+    uint16_t oldXpos;
+    uint16_t oldYpos;
+    uint16_t Xpos;
+    uint16_t Ypos;
 }ball_a;
 
 struct score{
@@ -59,59 +62,59 @@ int main(int argc, char *argv[])
 
 void play(){
     initialize(true);
-    while(playerAscore < 3 && playerBscore < 3){
-    //TODO:
-    //Handle Inputs
-    if(input == upLeft) movebat(0);
-    if (input == downLeft) movebat(1);
-    if(input == upRight) movebat(2);
-    if(input == downRight) movebat(3);
+    while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
+        //TODO:
+        //Handle Inputs
+    //    if(input == upLeft) movebat(0);
+    //    if (input == downLeft) movebat(1);
+    //    if(input == upRight) movebat(2);
+    //    if(input == downRight) movebat(3);
 
-    moveball();
-    handlePhysics();
+        moveball();
+        handlePhysics();
 
     }
 }
 
 void movebat(int input){
     switch (input) {
-        case 0; //Move left bat up
+        case 0: //Move left bat up
             if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, black);
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos --;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, white);
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);
             }
             break;
-        case 1; //Move left bat down
-            if (playerbat_a.Ypos + playerbat_a.heigth < playfield.height) {   //Checks that the bat doesn't move beyond the screen
+        case 1: //Move left bat down
+            if (playerbat_a.Ypos + playerbat_a.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, black);
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black);
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos ++;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.heigth, white);            }
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);            }
             break;
-        case 2; //Move right bat up
+        case 2: //Move right bat up
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, black);
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos --;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, white);
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
             break;
-        case 3; //Move right bat down
-            if (playerbat_b.Ypos + playerbat_b.heigth < playfield.height) {   //Checks that the bat doesn't move beyond the screen
+        case 3: //Move right bat down
+            if (playerbat_b.Ypos + playerbat_b.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                
                 //Draw a black rectangle to erase the previous position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, black);  
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black);  
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos ++;
                 //Draw a white rectangle a the new position
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.heigth, white);
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white);
             }
             break;
         default:
@@ -198,8 +201,8 @@ void initialize(bool first)
     playerbat_b.speed = 5;
     
     if(first){
-        playerAscore = 0;
-        playerBscore = 0;
+        gamescore.playerAscore = 0;
+        gamescore.playerBscore = 0;
     }
     initialize_screen();//Initializes the screen
     single_color(0);//sets the playfield to black
@@ -209,6 +212,7 @@ uint16_t *screen;
 struct fb_copyarea rect;
 struct fb_var_screeninfo screen_info;
 int fd;
+int screen_size;
 
 void initialize_screen(){
     
@@ -222,7 +226,7 @@ void initialize_screen(){
         printf("Could not open file containing framebuffer device \n");
         exit(EXIT_FAILURE);
     }
-    if(ioctl(fd, FBIOGET_VCREENINFO, &screen_info) == -1){
+    if(ioctl(fd, FBIOGET_VSCREENINFO, &screen_info) == -1){
         printf("Could not aquire screen info \n");
         exit(EXIT_FAILURE);
     }
@@ -241,15 +245,15 @@ void update_screen(){
 }
 
 void single_color(uint16_t color){
-    for (i = 0; i < 320*260; i++) {
+    for (int i = 0; i < 320*260; i++) {
         screen[i] = color;
     }
     update_screen();
 }
 
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
-    for (i = 0; i < width; i++) {
-        for (j = 0; j < height; j++) {
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
             screen[(Xpos+i)*2+(j+Ypos)*640] = color;
         }
     }
