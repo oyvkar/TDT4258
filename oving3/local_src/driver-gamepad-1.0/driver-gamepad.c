@@ -48,7 +48,7 @@ static struct file_operations fops = {
     .fasync = gp_fasync
 };
 	
-static int gp_fasync(int fd, struct file *Filp, int mode) {
+static int gp_fasync(int fd, struct file *filp, int mode) {
     return fasync_helper(fd, filp, mode, &async);
 }
 
