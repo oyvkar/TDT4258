@@ -101,7 +101,8 @@ void movebat(int input){
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos ++;
                 //Draw a white rectangle a the new position
-                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);            }
+                //draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white);  
+                }
             break;
         case 2: //Move right bat up
                 //Draw a black rectangle to erase the previous position
@@ -125,12 +126,11 @@ void movebat(int input){
         default:
             break;
             
-    }
+        }
     return;
 
 
 }
-
 void moveball(){
 
     //Draw a black ball to erase the current ball
