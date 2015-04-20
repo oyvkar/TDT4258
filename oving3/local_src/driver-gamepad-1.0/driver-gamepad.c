@@ -19,6 +19,8 @@
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/siginfo.h>
+#include <stdio.h>
+
 #include "efm32gg.h"
 #include "driver-gamepad.h"i
 
@@ -242,7 +244,7 @@ static void button_map(void) {
     int i;
     for (i = 0; i < 8; i++) {
         if( data && (1 << i)) {
-            sprintf((&buttons + strlen), "SW%i\t", i+1);
+            sprintf((buttons + strlen), "SW%i\t", i+1);
             strln += 3;
         }
     }
