@@ -26,13 +26,13 @@
 #define SUCCESS 0
 dev_t devNumber;
 unsigned int devCount = 1;
-struct cdev *buttons_cdev;
+struct cdev *titfuck_cdev;
 struct class *cl;
 void __iomem *gpio_porta_mem;
 void __iomem *gpio_portc_mem;
 void __iomem *gpio_int_mem;
 static int driverOpen = 0;
-char buttons[33];
+char titfuck[33];
 char *msg_ptr;
 
 static struct file_operations fops = {
@@ -52,12 +52,12 @@ static int __init gamepad_driver_init(void)
 	printk("Hello World, here is your module speaking\n");
 
 	// Create chardevice and device node
-    if( alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_buttons") < 0){
+    if( alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_titfuck") < 0){
 		printk(KERN_ERR "GAMEPAD: Character device region allocation FAILED, returning.\n");
 		return -1;
 	}
-	cl = class_create(THIS_MODULE, "GPIO_buttons");
-	device_create(cl,NULL,devNumber, NULL, "GPIO_buttons");
+	cl = class_create(THIS_MODULE, "GPIO_titfuck");
+	device_create(cl,NULL,devNumber, NULL, "GPIO_titfuck");
 	
 
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
@@ -118,13 +118,13 @@ static int __init gamepad_driver_init(void)
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	printk(KERN_DEBUG "GAMEPAD:Setting up IRQi 17\n");
-	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
+	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_titfuck", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
     printk(KERN_DEBUG "GAMEPAD:Setting up IRQ 18\n");
-    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
+    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_titfuck", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 2 request FAILED, returning \n");
 		return -1;
@@ -136,10 +136,10 @@ static int __init gamepad_driver_init(void)
     
 	//Activate driver and register allocations
     printk(KERN_DEBUG "GAMEPAD:Activating character device\n");
-    buttons_cdev = cdev_alloc();
-	buttons_cdev->owner = THIS_MODULE;
-	buttons_cdev->ops = &fops;
-	if(cdev_add(buttons_cdev,devNumber, devCount) < 0)
+    titfuck_cdev = cdev_alloc();
+	titfuck_cdev->owner = THIS_MODULE;
+	titfuck_cdev->ops = &fops;
+	if(cdev_add(titfuck_cdev,devNumber, devCount) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: Char device activation failed, returning\n");
 		return -1;
@@ -153,7 +153,7 @@ static void __exit gamepad_driver_cleanup(void)
 {
 	//Deactivate driver
 	printk(KERN_DEBUG "GAMEPAD:GAMEPAD: Deactivate driver\n");
-	cdev_del(buttons_cdev);
+	cdev_del(titfuck_cdev);
 	//Free even and odd interrupts
 	free_irq(17,NULL);
 	free_irq(18,NULL);
@@ -195,7 +195,7 @@ static int gamepad_open(struct inode *inode,struct file *file){
     }
 
     try_module_get(THIS_MODULE); // Prevent module unloading while in use
-    msg_ptr = buttons;
+    msg_ptr = titfuck;
     driverOpen++;
     return SUCCESS; //Configuration handled by the module_init
 }
@@ -235,69 +235,69 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 }
 
 static void button_map(void) {
-    buttons = "PRESSED: ";
+    titfuck = "PRESSED: ";
     int fuck;
     fuck = ioread8(gpio_portc_mem + DIN_OFFSET);
     switch(fuck) {
         case 0:
-            buttons[8] = "";
+            titfuck[8] = "";
             break;
         case 1:
-            buttons[8] = "SW1\t";
+            titfuck[8] = "SW1\t";
             break;
         case 2:
-            buttons[8] = "SW2\t";
+            titfuck[8] = "SW2\t";
             break;
         case 3:
-            buttons[8] = "SW1\tSW2\t";
+            titfuck[8] = "SW1\tSW2\t";
             break;
         case 4:
-            buttons[8] = "SW3\t";
+            titfuck[8] = "SW3\t";
             break;
         case 5:
-            buttons[8] = "SW1\tSW3\t";
+            titfuck[8] = "SW1\tSW3\t";
             break;
         case 6:
-            buttons[8] = "SW2\tSW3\t";
+            titfuck[8] = "SW2\tSW3\t";
             break;
         case 7:
-            buttons[8] = "SW1\tSW2\tSW3\t";
+            titfuck[8] = "SW1\tSW2\tSW3\t";
             break;
         case 8:
-            buttons[8] = "SW4\t";
+            titfuck[8] = "SW4\t";
             break;
         case 9:
-            buttons[8] = "SW1\tSW4\t";
+            titfuck[8] = "SW1\tSW4\t";
             break;
         case 10:
-            buttons[8] = "SW2\tSW4\t";
+            titfuck[8] = "SW2\tSW4\t";
             break;
         case 11:
-            buttons[8] = "SW2\tSW4\t";
+            titfuck[8] = "SW2\tSW4\t";
             break;
         case 12:
-            buttons[8] = "SW1\tSW2\tSW4\t";
+            titfuck[8] = "SW1\tSW2\tSW4\t";
             break;
         case 13:
-            buttons[8] = "SW3\tSW4\t";
+            titfuck[8] = "SW3\tSW4\t";
             break;
         case 14:
-            buttons[8] = "SW1\tSW3\tSW4\t";
+            titfuck[8] = "SW1\tSW3\tSW4\t";
             break;
         case 15:
-            buttons[8] = "SW1\tSW2\tSW3\tSW4\t";
+            titfuck[8] = "SW1\tSW2\tSW3\tSW4\t";
             break;
         case 16:
-            buttons[8] = "SW5\t";
+            titfuck[8] = "SW5\t";
             break;
         case 17:
-            buttons[8] = "SW1\tSW5\t";
+            titfuck[8] = "SW1\tSW5\t";
             break;
         case 18:
-            buttons[8] = "SW2\tSW5\t";
+            titfuck[8] = "SW2\tSW5\t";
             break;
         }
-    msg_ptr = buttons;
+    msg_ptr = titfuck;
 }
 
 
