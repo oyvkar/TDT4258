@@ -242,14 +242,22 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
 static void button_map(void) {
     uint8_t data;
     uint8_t strl;
+    char *btn_ptr;
+    btn_ptr = buttons;
 
+    strcpy(data, "ERR");
     data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
  //   printk(KERN_DEBUG "GAMEPAD: mapping buttons\n");
     int i;
+    if ( data == 0) {
+        strcpy(data, "NONE");
+        return;
+    }
+
     for (i = 0; i < 8; i++) {
         if( data && (1 << i)) {
-            sprintf((&buttons + strl), "SW%i\t", i+1);
-            strl += 3;
+            sprintf((buttons + strl), "SW%i\t", i+1);
+            btnptr += 4;
         }
     }
 /*
