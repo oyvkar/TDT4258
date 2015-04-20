@@ -72,7 +72,7 @@ void play(){
     //    if (input == downLeft) movebat(1);
     //    if(input == upRight) movebat(2);
     //    if(input == downRight) movebat(3);
-        single_color(rand()%256);
+       // single_color(rand()%256);
         moveball();
         handlePhysics();
         sleep(10);  // Value does not represent real time
@@ -258,7 +258,7 @@ void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
     for (i = Xpos; i < width + Xpos; i++) {
         for (j = Ypos; j < height + Ypos; j++) {
-            screen[i*2+j*640] = color;
+            screen[i+j*320] = color;
         }
     }
     update_screen();
