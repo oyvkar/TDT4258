@@ -74,8 +74,8 @@ void play(){
        // single_color(rand()%256);
         moveball();
         handlePhysics();
-        draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white);
-        draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white);
+        draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
+        draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, true); //Waits until all commits to screen have been added, then calls the update
    
         //sleep(0.01);  // Value does not represent real time
     }
@@ -134,7 +134,7 @@ void movebat(int input){
 void moveball(){
 
     //Draw a black ball to erase the current ball
-    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, black);
+    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, black, false);
 
     //Update current position
     ball_a.oldXpos = ball_a.Xpos;
@@ -144,7 +144,7 @@ void moveball(){
     ball_a.Ypos = ball_a.Ypos + ball_a.Yspeed;
 
     //Draw a new white ball
-    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white);
+    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white,false);
  
     //Handle some ball collisions
     if(ball_a.Ypos - ball_a.radius < 15)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
@@ -211,8 +211,8 @@ void initialize(bool first)
         initialize_screen();//Initializes the screen
     }
     single_color(0);//sets the playfield to black
-    draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white);
-    draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white);
+    draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
+    draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, true);
 }
 
 uint16_t *screen;
@@ -258,14 +258,16 @@ void single_color(uint16_t color){
     update_screen();
 }
 
-void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
+void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color, bool do_update){
     int i, j;
     for (i = Xpos; i < width + Xpos; i++) {
         for (j = height + Ypos; j > Ypos; j--) {
             screen[i+j*320] = color;
         }
     }
-    update_screen();
+    if (do_update) {
+        update_screen();
+    }
 }
 
 
