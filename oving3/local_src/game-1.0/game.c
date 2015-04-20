@@ -256,9 +256,9 @@ void single_color(uint16_t color){
 
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
-    for (i = Xpos; i < width; i++) {
-        for (j = Ypos; j < height; j++) {
-            screen[(Xpos+i)*2+(j+Ypos)*640] = color;
+    for (i = Xpos; i < width + Xpos; i++) {
+        for (j = Ypos; j < height + Ypos; j++) {
+            screen[i*2+j*640] = color;
         }
     }
     update_screen();
