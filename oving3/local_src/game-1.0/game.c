@@ -84,7 +84,7 @@ void play(){
    
         //sleep(0.01);  // Value does not represent real time
     }
-    close_gamepad();
+    close_controller();
 }
 
 void movebat(int input){
