@@ -52,7 +52,7 @@ static int __init gamepad_driver_init(void)
 
 	// Create chardevice and device node
     if( alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_buttons") < 0){
-		printk(KERN_ERR "Character device region allocation FAILED, returning.\n");
+		printk(KERN_ERR "GAMEPAD: Character device region allocation FAILED, returning.\n");
 		return -1;
 	}
 	cl = class_create(THIS_MODULE, "GPIO_buttons");
@@ -62,17 +62,17 @@ static int __init gamepad_driver_init(void)
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
 	if(request_mem_region(GPIO_PA_BASE, 0x24,"GPIO_port_a") == 0)
 	{
-		printk(KERN_ERR "Port A memory request failed\n");
+		printk(KERN_ERR "GAMEPAD: Port A memory request failed\n");
 		return -1;
 	}
 	if( request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c") == 0)
 	{
-		printk(KERN_ERR "Port C memory request failed\n");
+		printk(KERN_ERR "GAMEPAD: Port C memory request failed\n");
 		return -1;
 	}
 	if (request_mem_region(GPIO_INT_BASE, 0x10, "GPIO_int") == 0) 
     {
-        printk(KERN_ERR "GPIO Interrupt memory request failed\n");
+        printk(KERN_ERR "GAMEPAD: GPIO Interrupt memory request failed\n");
         return -1;
     }
 
@@ -81,20 +81,20 @@ static int __init gamepad_driver_init(void)
 	printk(KERN_DEBUG "GAMEPAD:gpio_porta_mem_addr: %p\n", gpio_porta_mem);
 	if(gpio_porta_mem == 0)
 	{
-		printk(KERN_ERR "Port A remap failed\n");
+		printk(KERN_ERR "GAMEPAD: Port A remap failed\n");
 		return -1;
 	}
 	gpio_portc_mem = ioremap_nocache(GPIO_PC_BASE, 0x24);
 	printk(KERN_DEBUG "GAMEPAD:gpio_portc_mem_addr: %p\n", gpio_portc_mem);
 	if(gpio_portc_mem == 0)
 	{
-		printk(KERN_ERR "Port C remap failed\n");
+		printk(KERN_ERR "GAMEPAD: Port C remap failed\n");
 		return -1;
 	}
     gpio_int_mem = ioremap_nocache(GPIO_INT_BASE, 0x10);
     printk(KERN_DEBUG "GAMEPAD:gpio_int_mem_addr: %p\n", gpio_int_mem);
     if(gpio_int_mem == 0) {
-        printk(KERN_ERR "GPIO Interrupt remap failed");
+        printk(KERN_ERR "GAMEPAD: GPIO Interrupt remap failed");
         return -1;
     }
 
@@ -117,13 +117,13 @@ static int __init gamepad_driver_init(void)
 	printk(KERN_DEBUG "GAMEPAD:Setting up IRQi 17\n");
 	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
-		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
+		printk(KERN_ERR "GAMEPAD: IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
     printk(KERN_DEBUG "GAMEPAD:Setting up IRQ 18\n");
     if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
-		printk(KERN_ERR "IRQ 2 request FAILED, returning \n");
+		printk(KERN_ERR "GAMEPAD: IRQ 2 request FAILED, returning \n");
 		return -1;
 	}
 
@@ -138,20 +138,13 @@ static int __init gamepad_driver_init(void)
 	buttons_cdev->ops = &fops;
 	if(cdev_add(buttons_cdev,devNumber, devCount) < 0)
 	{
-		printk(KERN_ERR "Char device activation failed, returning\n");
+		printk(KERN_ERR "GAMEPAD: Char device activation failed, returning\n");
 		return -1;
 	}
 
 
 	return 0;
 }
-
-/*
- * template_cleanup - function to cleanup this module from kernel space
- *
- * This is the second of two exported functions to handle cleanup this
- * code from a running kernel
- */
 
 static void __exit gamepad_driver_cleanup(void)
 {
@@ -199,13 +192,13 @@ static int gamepad_open(struct inode *inode,struct file *file){
     }
 
     try_module_get(THIS_MODULE); // Prevent module unloading while in use
-    driverOpen = 1;
+    driverOpen++;
     return SUCCESS; //Configuration handled by the module_init
 }
 
 // Userspace program closes driver
 static int gamepad_release(struct inode *inode, struct file *file){
-    driverOpen = 0;
+    driverOpen--;
     module_put(THIS_MODULE); // Allow module unloading
     return SUCCESS; //Configuration handled by the module_exit
 }
@@ -217,8 +210,6 @@ static ssize_t my_read (struct file *filp, char __user *buff, size_t count, loff
 
     return SUCCESS;
 }
-
-
 
 //user program writes to the driver
 static ssize_t my_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
@@ -232,29 +223,6 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
     printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
     return (irq_handler_t) IRQ_HANDLED; 
 }
-
-
-
-/*
-MISSING:
-
-
-gamepad_read
-- reads data from the driver
-
-gamepad_llseek(?)
-- ???????
-
-gamepad_mmap
-- maps memory to userspace program
-
-interrupt_handler
-- handles interrupts
-
-
-*/
-
-
 
 module_init(gamepad_driver_init);
 module_exit(gamepad_driver_cleanup);
