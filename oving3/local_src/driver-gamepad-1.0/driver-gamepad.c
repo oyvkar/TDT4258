@@ -235,7 +235,7 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, l
 
 static void button_map(void) {
     int fuck;
-    fuck = ioread8(gpio_portc_mem + DIN_OFFSET);
+    fuck = ~ioread8(gpio_portc_mem + DIN_OFFSET);
     printk(KERN_DEBUG "GAMEPAD: mapping buttons\n");
     switch(fuck) {
         case 0:
