@@ -102,19 +102,14 @@ static int __init gamepad_driver_init(void)
     printk(KERN_DEBUG "Config interrupt and GIPO\n");
 	// Set pint 0-7 as input
     iowrite32(0x33333333,   gpio_portc_mem + MODEL_OFFSET );
-    printk(KERN_DEBUG "Bla\n");
     // Set internal pullup
     iowrite32(0xff, 	gpio_portc_mem + DOUT_OFFSET);
-    printk(KERN_DEBUG "Bla\n");
     // Enable interrupt on port C
     iowrite32(0x22222222,   gpio_int_mem + EXTIPSELL_OFFSET);
-    printk(KERN_DEBUG "bla\n");
     // Enable interrupt on rising edge
     iowrite32(0xff, gpio_int_mem + EXTIRISE_OFFSET);
-    printk(KERN_DEBUG "blag\n");
     // Enable interrupt on falling edge
     iowrite32(0xff, gpio_int_mem + EXTIFALL_OFFSET);
-    printk(KERN_DEBUG "agag\n");
     // Enable interrupt
     iowrite32(0xff, gpio_int_mem + IEN_OFFSET);
 
