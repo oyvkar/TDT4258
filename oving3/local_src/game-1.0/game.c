@@ -147,13 +147,13 @@ void moveball(){
     draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white,false);
  
     //Handle some ball collisions
-    if(ball_a.Ypos + ball_a.radius < 15)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
-    if(ball_a.Ypos - ball_a.radius > playfield_a.height - 15)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
+    if(ball_a.Ypos + ball_a.radius < 30)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
+    if(ball_a.Ypos - ball_a.radius > playfield_a.height - 30)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
 }
 
 void handlePhysics(){
-    if (ball_a.Xpos - ball_a.radius <= 35) {   //Checks if the ball hits the bat
-        if (ball_a.Ypos > playerbat_a.Ypos || ball_a.Ypos < (playerbat_a.Ypos + playerbat_a.length)) {
+    if (ball_a.Xpos - ball_a.radius <= 30) {   //Checks if the ball hits the bat
+        if (ball_a.Ypos < playerbat_a.Ypos || ball_a.Ypos < (playerbat_a.Ypos - playerbat_a.length)) {
             ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
             ball_a.Yspeed = rand()%4;//Random Y speed
             if(rand()%2 == 0)ball_a.Yspeed = -ball_a.Yspeed;//Random Y direction
@@ -164,8 +164,8 @@ void handlePhysics(){
         }
         return;
     }
-    if (ball_a.Xpos + ball_a.radius >= 285) {   //Checks if the ball hits the bat
-            if (ball_a.Ypos > playerbat_b.Ypos || ball_a.Ypos <( playerbat_b.Ypos + playerbat_b.length)) {
+    if (ball_a.Xpos + ball_a.radius >= 295) {   //Checks if the ball hits the bat
+            if (ball_a.Ypos < playerbat_b.Ypos || ball_a.Ypos <( playerbat_b.Ypos - playerbat_b.length)) {
                 ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
                 ball_a.Yspeed = rand()%4;//Random Y speed
                 if(rand()%2 == 0)ball_a.Yspeed = -ball_a.Yspeed;//Random Y direction
