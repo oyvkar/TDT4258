@@ -35,11 +35,7 @@ void __iomem *gpio_int_mem;
 static int driverOpen = 0;
 char buttons[33];
 char *msg_ptr;
-
-
-static int gp_fasync(int fd, struct file *Filp, int mode) {
-    return 0;
-}
+struct fasync_struct* async;
 
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
@@ -48,9 +44,13 @@ static struct file_operations fops = {
     .write = gp_write,
 	.open = gp_open,
 	.release = gp_release
-   // .fasync = gp_fasync
+    .fasync = gp_fasync
 };
 	
+static int gp_fasync(int fd, struct file *Filp, int mode) {
+    return fasync_helper(fd, filp, mode, &async);
+}
+
 
 // Called on module load
 static int __init gamepad_driver_init(void)
@@ -271,6 +271,8 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
     iowrite32(0xFF, gpio_int_mem + IFC_OFFSET);
  //   printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
     button_map();
+    if (async) 
+        kill_fasync(&async, SIGIO, POLL_IN);
     return (irq_handler_t) IRQ_HANDLED; 
 }
 
