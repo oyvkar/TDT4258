@@ -209,6 +209,8 @@ void initialize(bool first)
         initialize_screen();//Initializes the screen
     }
     single_color(0);//sets the playfield to black
+    draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white);
+    draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white);
 }
 
 uint16_t *screen;
@@ -257,7 +259,7 @@ void single_color(uint16_t color){
 void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
     for (i = Xpos; i < width + Xpos; i++) {
-        for (j = height + Ypos; j < Ypos; j--) {
+        for (j = height + Ypos; j > Ypos; j--) {
             screen[i+j*320] = color;
         }
     }
