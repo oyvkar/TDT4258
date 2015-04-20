@@ -255,7 +255,7 @@ static void button_map(void) {
     }
     printk(KERN_DEBUG "GAMEPAD: data: %i", data);
     for (i = 0; i < 8; i++) {
-        if( data && (1 << i)) {
+        if( data & (1 << i)) {
             sprintf(btn_ptr, "SW%i\t", i+1);
             btn_ptr += 4;
         }
