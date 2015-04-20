@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
+#include <signal.h>
+
 
 #include "game.h"
 
@@ -51,7 +53,10 @@ struct score{
 
 uint16_t white = 0xffff;
 uint16_t black = 0;
-
+FILE* gamepad;
+long oflags;
+int input_a;
+int input_b;
 
 int main(int argc, char *argv[])
 {
@@ -79,6 +84,7 @@ void play(){
    
         //sleep(0.01);  // Value does not represent real time
     }
+    close_gamepad();
 }
 
 void movebat(int input){
@@ -211,10 +217,44 @@ void initialize(bool first)
         gamescore.playerAscore = 0;
         gamescore.playerBscore = 0;
         initialize_screen();//Initializes the screen
+        open_controller();
     }
     single_color(0);//sets the playfield to black
     draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
     draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, true);
+}
+
+void open_controller(){
+    gamepad = fopen("/dev/gamepad", "r");
+    if(!gamepad){
+        printf("Failed to open gamepad driver! Exitin\n");
+        exit(EXIT_FAILURE);
+    }
+    signal(SIGIO, &input_handler);
+    fcntl(STDIN_FILENO, F_SETOWN, getpid());
+    oflags = fcntl(STDIN_FILENO, F_GETFL);
+    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+}
+
+void close_controller(){
+    fclose(gamepad);
+}
+
+void input_handler(){
+    char *buffer;
+    while (getdelim(&buffer, 0, '\t', gamepad)) {
+        if (buffer == "NONE") {
+            input_a = 0;
+            input_b = 0;
+            free(buffer);
+            return;
+        }
+        if (buffer == "SW2") input_a = 1;
+        if (buffer == "SW4") input_a = 2;
+        if (buffer == "SW6") input_b = 1;
+        if (buffer == "SW8") input_b = 2;
+    }
+    free(buffer);
 }
 
 uint16_t *screen;
