@@ -253,7 +253,7 @@ static void button_map(void) {
         strcpy(data, "NONE");
         return;
     }
-
+    printk(KERN_DEBUG "GAMEPAD: data: %i", data);
     for (i = 0; i < 8; i++) {
         if( data && (1 << i)) {
             sprintf(btn_ptr, "SW%i\t", i+1);
