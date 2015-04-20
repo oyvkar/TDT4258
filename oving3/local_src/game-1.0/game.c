@@ -167,7 +167,7 @@ void handlePhysics(){
         return;
     }
     if (ball_a.Xpos + ball_a.radius >= 295) {   //Checks if the ball hits the bat
-            if (1) { // ((ball_a.Ypos > playerbat_b.Ypos) && (ball_a.Ypos <( playerbat_b.Ypos - playerbat_b.length))) {
+            if ((playerbat_b.Ypos <= ball_a.Ypos) && (ball_a.Ypos <= (playerbat_b.Ypos + playerbat_b.length)))  {
                 ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
                 ball_a.Yspeed = rand()%4;//Random Y speed
                 if(rand()%2 == 0)ball_a.Yspeed = -ball_a.Yspeed;//Random Y direction
