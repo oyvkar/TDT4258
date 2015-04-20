@@ -209,16 +209,16 @@ static int gamepad_release(struct inode *inode, struct file *file){
 }
 
 // user program reads from the driver
-static ssize_t my_read (struct file *filp, char __user *buffer, size_t count, loff_t *offp){
+static ssize_t my_read (struct file *filp, char __user *buffer, size_t length, loff_t *offp){
     
     /* Number of bytes actually written to the buffer */
    int bytes_read = 0;
 
    /* If we're at the end of the message, return 0 signifying end of file */
-   if (*msg_Ptr == 0) return 0;
+   if (*msg_ptr == 0) return 0;
 
    /* Actually put the data into the buffer */
-   while (length && *msg_Ptr)  {
+   while (length && *msg_ptr)  {
 
         /* The buffer is in the user data segment, not the kernel segment;
          * assignment won't work.  We have to use put_user which copies data from
@@ -237,7 +237,7 @@ static ssize_t my_read (struct file *filp, char __user *buffer, size_t count, lo
 
 static void button_map(void) {
     buttons = "PRESSED: ";
-    uint8_t data = ioread8(portc_mem_base + DIN_OFFSET);
+    uint8_t data = ioread8(gpio_portc_mem + DIN_OFFSET);
     switch(data) {
         case 0:
             buttons[8] = "";
