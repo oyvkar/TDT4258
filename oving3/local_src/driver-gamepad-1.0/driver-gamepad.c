@@ -12,6 +12,7 @@
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/interrupt.h>
+#include <linux/signals.h>
 #include <linux/uaccess.h>
 #include <linux/poll.h>
 #include <linux/kdev_t.h>
