@@ -75,7 +75,7 @@ void play(){
        // single_color(rand()%256);
         moveball();
         handlePhysics();
-        sleep(0.1);  // Value does not represent real time
+        sleep(0.05);  // Value does not represent real time
     }
 }
 
@@ -145,12 +145,12 @@ void moveball(){
     draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white);
  
     //Handle some ball collisions
-    if(ball_a.Ypos - ball_a.radius < 0)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
-    if(ball_a.Ypos + ball_a.radius > playfield_a.height)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
+    if(ball_a.Ypos - ball_a.radius < 15)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
+    if(ball_a.Ypos + ball_a.radius > playfield_a.height - 15)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
 }
 
 void handlePhysics(){
-    if (ball_a.Xpos -ball_a.radius <= 2) {   //Checks if the ball hits the bat
+    if (ball_a.Xpos -ball_a.radius <= 15) {   //Checks if the ball hits the bat
         if (ball_a.Ypos > playerbat_a.Ypos || ball_a.Ypos < (playerbat_a.Ypos + playerbat_a.length)) {
             ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
             ball_a.Yspeed = rand()%4;//Random Y speed
@@ -162,7 +162,7 @@ void handlePhysics(){
         }
         return;
     }
-    if (ball_a.Xpos -ball_a.radius >= 317) {   //Checks if the ball hits the bat
+    if (ball_a.Xpos -ball_a.radius >= 307) {   //Checks if the ball hits the bat
             if (ball_a.Ypos > playerbat_b.Ypos || ball_a.Ypos <( playerbat_b.Ypos + playerbat_b.length)) {
                 ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
                 ball_a.Yspeed = rand()%4;//Random Y speed
@@ -208,7 +208,7 @@ void initialize(bool first)
         gamescore.playerBscore = 0;
         initialize_screen();//Initializes the screen
     }
-    single_color(138);//sets the playfield to black
+    single_color(0);//sets the playfield to black
 }
 
 uint16_t *screen;
