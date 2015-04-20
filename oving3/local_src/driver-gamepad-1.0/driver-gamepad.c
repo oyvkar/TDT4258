@@ -78,28 +78,28 @@ static int __init gamepad_driver_init(void)
 
 	// Remap to virtual addresses
 	gpio_porta_mem = ioremap_nocache(GPIO_PA_BASE, 0x24);
-	printk(KERN_DEBUG "gpio_porta_mem_addr: %p\n", gpio_porta_mem);
+	printk(KERN_DEBUG "GAMEPAD:gpio_porta_mem_addr: %p\n", gpio_porta_mem);
 	if(gpio_porta_mem == 0)
 	{
 		printk(KERN_ERR "Port A remap failed\n");
 		return -1;
 	}
 	gpio_portc_mem = ioremap_nocache(GPIO_PC_BASE, 0x24);
-	printk(KERN_DEBUG "gpio_portc_mem_addr: %p\n", gpio_portc_mem);
+	printk(KERN_DEBUG "GAMEPAD:gpio_portc_mem_addr: %p\n", gpio_portc_mem);
 	if(gpio_portc_mem == 0)
 	{
 		printk(KERN_ERR "Port C remap failed\n");
 		return -1;
 	}
     gpio_int_mem = ioremap_nocache(GPIO_INT_BASE, 0x10);
-    printk(KERN_DEBUG "gpio_int_mem_addr: %p\n", gpio_int_mem);
+    printk(KERN_DEBUG "GAMEPAD:gpio_int_mem_addr: %p\n", gpio_int_mem);
     if(gpio_int_mem == 0) {
         printk(KERN_ERR "GPIO Interrupt remap failed");
         return -1;
     }
 
 
-    printk(KERN_DEBUG "Config interrupt and GIPO\n");
+    printk(KERN_DEBUG "GAMEPAD:Config interrupt and GIPO\n");
 	// Set pint 0-7 as input
     iowrite32(0x33333333,   gpio_portc_mem + MODEL_OFFSET );
     // Set internal pullup
@@ -114,13 +114,13 @@ static int __init gamepad_driver_init(void)
     iowrite32(0xff, gpio_int_mem + IEN_OFFSET);
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
-	printk(KERN_DEBUG "Setting up IRQi 17\n");
+	printk(KERN_DEBUG "GAMEPAD:Setting up IRQi 17\n");
 	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
-    printk(KERN_DEBUG "Setting up IRQ 18\n");
+    printk(KERN_DEBUG "GAMEPAD:Setting up IRQ 18\n");
     if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
 	{
 		printk(KERN_ERR "IRQ 2 request FAILED, returning \n");
@@ -132,7 +132,7 @@ static int __init gamepad_driver_init(void)
     
     
 	//Activate driver and register allocations
-    printk(KERN_DEBUG "Activating character device\n");
+    printk(KERN_DEBUG "GAMEPAD:Activating character device\n");
     buttons_cdev = cdev_alloc();
 	buttons_cdev->owner = THIS_MODULE;
 	buttons_cdev->ops = &fops;
@@ -155,39 +155,37 @@ static int __init gamepad_driver_init(void)
 
 static void __exit gamepad_driver_cleanup(void)
 {
-	 printk("Short life for a small module...\n");
-
 	//Deactivate driver
-	printk(KERN_DEBUG "Deactivate driver\n");
+	printk(KERN_DEBUG "GAMEPAD:GAMEPAD: Deactivate driver\n");
 	cdev_del(buttons_cdev);
 	//Free even and odd interrupts
 	free_irq(17,NULL);
 	free_irq(18,NULL);
 
 	//Disable GPIO interrupts
-	printk(KERN_DEBUG "Disable GPIUO interrupts\n");
+	printk(KERN_DEBUG "GAMEPAD:Disable GPIUO interrupts\n");
 	iowrite32(0x0, gpio_int_mem + IEN_OFFSET);
 	iowrite32(0x0, gpio_int_mem + EXTIRISE_OFFSET);
 	iowrite32(0x0, gpio_int_mem + EXTIFALL_OFFSET);
 
-	printk(KERN_DEBUG "Unmap GPIO\n");
+	printk(KERN_DEBUG "GAMEPAD:Unmap GPIO\n");
 	iounmap(gpio_porta_mem);
 	iounmap(gpio_portc_mem);
     iounmap(gpio_int_mem);
 
 	//Release memory
-	printk(KERN_DEBUG "Release memory region\n");
+	printk(KERN_DEBUG "GAMEPAD:Release memory region\n");
 	release_mem_region(GPIO_PA_BASE, 0x24);
 	release_mem_region(GPIO_PC_BASE, 0x24);
     release_mem_region(GPIO_INT_BASE, 0x20);
 
 	//Destroy class and device
-	printk(KERN_DEBUG "Destroy class and device\n");
+	printk(KERN_DEBUG "GAMEPAD:Destroy class and device\n");
 	device_destroy(cl,devNumber);
 	class_destroy(cl);
 
 	//Unregister char device region
-	printk(KERN_DEBUG "Unregister char device region\n");
+	printk(KERN_DEBUG "GAMEPAD:Unregister char device region\n");
 	unregister_chrdev_region(devNumber, devCount);
 }
 
@@ -231,7 +229,7 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
     
     // Clear interrupt flags
     iowrite32(0xffff, gpio_int_mem + IFC_OFFSET);
-    printk(KERN_DEBUG "GPIO Interrupt\n");
+    printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
     return (irq_handler_t) IRQ_HANDLED; 
 }
 
