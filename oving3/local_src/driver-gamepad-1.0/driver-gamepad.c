@@ -239,61 +239,61 @@ static void button_map(void) {
     fuck = ioread8(gpio_portc_mem + DIN_OFFSET);
     switch(fuck) {
         case 0:
-            titfuck = "";
+            strcpy(titfuck, "");
             break;
         case 1:
-            titfuck = "SW1\t";
+            strcpy(titfuck, "SW1\t");
             break;
         case 2:
-            titfuck = "SW2\t";
+            strcpy(titfuck, "SW2\t");
             break;
         case 3:
-            titfuck = "SW1\tSW2\t";
+            strcpy(titfuck, "SW1\tSW2\t");
             break;
         case 4:
-            titfuck = "SW3\t";
+            strcpy(titfuck, "SW3\t");
             break;
         case 5:
-            titfuck = "SW1\tSW3\t";
+            strcpy(titfuck, "SW1\tSW3\t");
             break;
         case 6:
-            titfuck = "SW2\tSW3\t";
+            strcpy(titfuck, "SW2\tSW3\t");
             break;
         case 7:
-            titfuck = "SW1\tSW2\tSW3\t";
+            strcpy(titfuck, "SW1\tSW2\tSW3\t");
             break;
         case 8:
-            titfuck = "SW4\t";
+            strcpy(titfuck, "SW4\t");
             break;
         case 9:
-            titfuck = "SW1\tSW4\t";
+            strcpy(titfuck, "SW1\tSW4\t");
             break;
         case 10:
-            titfuck = "SW2\tSW4\t";
+            strcpy(titfuck, "SW2\tSW4\t");
             break;
         case 11:
-            titfuck = "SW2\tSW4\t";
+            strcpy(titfuck, "SW2\tSW4\t");
             break;
         case 12:
-            titfuck = "SW1\tSW2\tSW4\t";
+            strcpy(titfuck, "SW1\tSW2\tSW4\t");
             break;
         case 13:
-            titfuck = "SW3\tSW4\t";
+            strcpy(titfuck, "SW3\tSW4\t");
             break;
         case 14:
-            titfuck = "SW1\tSW3\tSW4\t";
+            strcpy(titfuck, "SW1\tSW3\tSW4\t");
             break;
         case 15:
-            titfuck = "SW1\tSW2\tSW3\tSW4\t";
+            strcpy(titfuck, "SW1\tSW2\tSW3\tSW4\t");
             break;
         case 16:
-            titfuck = "SW5\t";
+            strcpy(titfuck, "SW5\t");
             break;
         case 17:
-            titfuck = "SW1\tSW5\t";
+            strcpy(titfuck, "SW1\tSW5\t");
             break;
         case 18:
-            titfuck = "SW2\tSW5\t";
+            strcpy(titfuck, "SW2\tSW5\t");
             break;
         }
     msg_ptr = titfuck;
