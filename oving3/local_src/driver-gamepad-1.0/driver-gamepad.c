@@ -19,7 +19,6 @@
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/siginfo.h>
-
 #include "efm32gg.h"
 #include "driver-gamepad.h"i
 
@@ -33,8 +32,8 @@ void __iomem *gpio_porta_mem;
 void __iomem *gpio_portc_mem;
 void __iomem *gpio_int_mem;
 static int driverOpen = 0;
-static char buttons[33];
-static char *msg_ptr;
+char buttons[33];
+char *msg_ptr;
 
 static struct file_operations fops = {
 	.owner = THIS_MODULE,
