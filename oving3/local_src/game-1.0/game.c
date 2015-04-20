@@ -75,7 +75,7 @@ void play(){
 
         moveball();
         handlePhysics();
-        sleep(10);
+        sleep(10);  // Value does not represent real time
     }
 }
 
@@ -207,7 +207,7 @@ void initialize(bool first)
         gamescore.playerBscore = 0;
         initialize_screen();//Initializes the screen
     }
-    single_color(0);//sets the playfield to black
+    single_color(138);//sets the playfield to black
 }
 
 uint16_t *screen;
