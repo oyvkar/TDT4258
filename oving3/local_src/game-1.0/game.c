@@ -77,7 +77,7 @@ void play(){
         draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white);
         draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white);
    
-        sleep(0.01);  // Value does not represent real time
+        //sleep(0.01);  // Value does not represent real time
     }
 }
 
