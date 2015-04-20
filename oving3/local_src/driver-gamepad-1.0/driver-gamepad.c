@@ -55,15 +55,15 @@ static struct file_operations fops = {
 // Called on module load
 static int __init gamepad_driver_init(void)
 {
-	printk("Hello World, here is your module speaking\n");
+	printk("Loding gamepad driver\n");
 
 	// Create chardevice and device node
-    if( alloc_chrdev_region(&devNumber, 0, devCount, "GPIO_buttons") < 0){
+    if( alloc_chrdev_region(&devNumber, 0, devCount, "gamepad") < 0){
 		printk(KERN_ERR "GAMEPAD: Character device region allocation FAILED, returning.\n");
 		return -1;
 	}
-	cl = class_create(THIS_MODULE, "GPIO_buttons");
-	device_create(cl,NULL,devNumber, NULL, "GPIO_buttons");
+	cl = class_create(THIS_MODULE, "gamepad");
+	device_create(cl,NULL,devNumber, NULL, "gamepad");
 	
 
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
@@ -124,13 +124,13 @@ static int __init gamepad_driver_init(void)
 
 	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	printk(KERN_DEBUG "GAMEPAD:Setting up IRQi 17\n");
-	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
+	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "gamepad", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 1 request FAILED, returning \n");
 		return -1;
 	}
     printk(KERN_DEBUG "GAMEPAD:Setting up IRQ 18\n");
-    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "GPIO_buttons", NULL) < 0)
+    if(request_irq(18, (irq_handler_t) interrupt_handler, 0, "gamepad", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 2 request FAILED, returning \n");
 		return -1;
@@ -158,7 +158,7 @@ static int __init gamepad_driver_init(void)
 static void __exit gamepad_driver_cleanup(void)
 {
 	//Deactivate driver
-	printk(KERN_DEBUG "GAMEPAD:GAMEPAD: Deactivate driver\n");
+	printk(KERN_DEBUG "GAMEPAD: Deactivate driver\n");
 	cdev_del(buttons_cdev);
 	//Free even and odd interrupts
 	free_irq(17,NULL);
@@ -256,7 +256,7 @@ static void button_map(void) {
             btn_ptr += 4;
         }
     }
-    *(btn_ptr-1) = '\n';
+    *btn_ptr = '\n';
 }
 
 
