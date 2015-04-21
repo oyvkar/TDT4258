@@ -67,11 +67,11 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-  //  open_controller();    
+    open_controller();    
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
- //   close_controller();
+    close_controller();
     close_screen();
     exit(EXIT_SUCCESS);
     return 0;
@@ -223,7 +223,7 @@ void initialize(bool first)
 }
 
 void open_controller(){
-    gamepad = fopen("/dev/gamepad", "r");
+    gamepad = fopen("/dev/gamepad", "rb");
     if(!gamepad){
         printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
@@ -245,11 +245,11 @@ void close_screen() {
 
 void input_handler(int singal_no){
     char buffer[30];
-    open_controller();
-//    printf("INPUT: Signal\n");
+//    open_controller();
+    printf("INPUT: Signal\n");
     while ( fgets(buffer, 30, gamepad) != NULL ) {
-       //if (strlen(buffer) == 6)
-       //     break;
+       if (strlen(buffer) == 7)
+            break;
         printf("INPUT: Len %i\t%s\n",strlen(buffer),buffer);
         if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
         if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
@@ -260,7 +260,7 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
-    close_controller();
+//    close_controller();
 }
 void initialize_screen(){
     
