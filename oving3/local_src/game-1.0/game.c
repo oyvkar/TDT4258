@@ -10,7 +10,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
-
+#include <strings.h>
 
 #include "game.h"
 
@@ -71,7 +71,6 @@ void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
         //TODO:
-        //Handle Inputs
        // single_color(rand()%256);
         movebat();
         printf("%i %i \n", input_a, input_b);
@@ -226,25 +225,24 @@ void close_controller(){
 }
 
 void input_handler(){
-    int bytes_read;
-    int nbytes = 30;
+    size_t nbytes = 30;
     char *buffer;
+
     buffer = (char *) malloc(nbytes+1);
-    while (getline(&buffer, &nbytes, gamepad)) {
+    while (getline(&buffer,&nbytes, gamepad) == 6) {
         if (buffer == "") {
             printf("INPUT: Empty buffer\n");
             free(buffer);
             return;
         }
-        if  (buffer == "SW2: 1") input_a = 1;
-        if ((buffer == "SW2: 0") && (input_a == 1)) input_a = 0;
-        if  (buffer == "SW4: 0") input_a = 2;
-        if ((buffer == "SW4: 0") && (input_a == 2)) input_a = 0;
-
-        if  (buffer == "SW6: 1") input_b = 1;
-        if ((buffer == "SW6: 0") && (input_b == 1)) input_b = 0;
-        if  (buffer == "SW8: 1") input_b = 2;
-        if ((buffer == "SW8: 0") && (input_b == 2)) input_b = 0;
+        if ((buffer[2] == '1') && (buffer[4] == '1')                  )  input_a = 1;
+        if ((buffer[2] == '1') && (buffer[4] == '0') && (input_a == 1))  input_a = 0;
+        if ((buffer[2] == '2') && (buffer[4] == '1')                  )  input_a = 2;
+        if ((buffer[2] == '2') && (buffer[4] == '0') && (input_a == 2))  input_a = 0;
+        if ((buffer[2] == '4') && (buffer[4] == '1')                  )  input_b = 1;
+        if ((buffer[2] == '4') && (buffer[4] == '0') && (input_b == 1))  input_b = 0;
+        if ((buffer[2] == '6') && (buffer[4] == '1')                  )  input_b = 2;
+        if ((buffer[2] == '6') && (buffer[4] == '0') && (input_b == 2))  input_b = 0;
         printf("INPUT: %s", buffer);
         free(buffer);
     }
