@@ -223,7 +223,8 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
    if (*msg_ptr == 0) {
        msg_ptr = &buttons;
        btn_ptr = &buttons;
-       return 0;
+       put_user('\0', buffer);
+       return 1;
    }
 
    /* Actually put the data into the buffer */
@@ -241,8 +242,6 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
 
    /* Most read functions return the number of bytes put into the buffer */
    return bytes_read;
-
-    return 1; // Number of bytes written
 }
 
 // Fill buffer with changes in button state
