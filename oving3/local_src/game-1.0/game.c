@@ -10,7 +10,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
-#include <strings.h>
 
 #include "game.h"
 
