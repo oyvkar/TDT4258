@@ -82,7 +82,7 @@ void play(){
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
         //TODO:
        // single_color(rand()%256);
-        input_handler();
+//        input_handler();
         movebat();
         printf("%i %i \n", input_a, input_b);
         moveball();
@@ -229,10 +229,10 @@ void open_controller(){
         exit(EXIT_FAILURE);
     }
     printf("Controller opened\n");
-//    signal(SIGIO, &input_handler);
-//    fcntl(STDIN_FILENO, F_SETOWN, getpid());
-//    oflags = fcntl(STDIN_FILENO, F_GETFL);
-//    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+    signal(SIGIO, &input_handler);
+    fcntl(STDIN_FILENO, F_SETOWN, getpid());
+    oflags = fcntl(STDIN_FILENO, F_GETFL);
+    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
 }
 
 void close_controller(){
