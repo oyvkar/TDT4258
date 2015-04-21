@@ -233,16 +233,20 @@ void close_controller(){
 }
 
 void close_screen() {
-    fclose(fb);
+    close(fb);
 }
 
 void input_handler(){
+    int read_bytes;
     size_t nbytes = 30;
     char *buffer;
 
     buffer = (char *) malloc(nbytes+1);
     printf("INPUT: Signal\n");
-    while (getline(&buffer,&nbytes, gamepad)) {
+    while ((read_bytes = getline(&buffer,&nbytes, gamepad)) != -1) {
+        if (read_bytes == 0)
+            break;
+        printf("IINPUT: Len %i\t%s\n",read_bytes,buffer);
         if ((buffer[2] == '1') && (buffer[5] == '1')                  )  input_a = 1;
         if ((buffer[2] == '1') && (buffer[5] == '0') && (input_a == 1))  input_a = 0;
         if ((buffer[2] == '2') && (buffer[5] == '1')                  )  input_a = 2;
@@ -251,7 +255,6 @@ void input_handler(){
         if ((buffer[2] == '4') && (buffer[5] == '0') && (input_b == 1))  input_b = 0;
         if ((buffer[2] == '6') && (buffer[5] == '1')                  )  input_b = 2;
         if ((buffer[2] == '6') && (buffer[5] == '0') && (input_b == 2))  input_b = 0;
-        printf("INPUT: %s", buffer);
     }
     free(buffer);
 }
