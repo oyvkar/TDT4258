@@ -80,9 +80,7 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
-    //    input_handler();
         movebat();
-        printf("%i %i \n", input_a, input_b);
         moveball();
         handlePhysics();
         update_screen();  // After all updates to the game have been made, update the display
@@ -230,7 +228,6 @@ void open_controller(){
         printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
     }
-    printf("Controller opened\n");
      
     if(signal(SIGIO, &input_handler) == SIG_ERR){
         printf("Failed to create signal handler\n");
@@ -257,12 +254,9 @@ void close_screen() {
 
 void input_handler(int singal_no){
     char buffer[30];
- //   open_controller();
-    printf("INPUT: Signal\n");
     while ( fgets(buffer, 30, gamepad) != NULL ) {
        if (strlen(buffer) != 7)
             break;
-        printf("INPUT: Len %i\t%s\n",strlen(buffer),buffer);
         if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
         if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
         if ((buffer[2] == '4') && (buffer[5] == '1') )  input_a = 2;
@@ -272,7 +266,6 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
- //   close_controller();
 }
 void initialize_screen(){
     
@@ -322,5 +315,3 @@ void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color, bo
         update_screen();
     }
 }
-
-
