@@ -260,13 +260,10 @@ int get_line(FILE *fp, char *buffer, size_t buflen)
     char *end = buffer + buflen - 1; /* Allow space for null terminator */
     char *dst = buffer;
     int c;
-    int len;
-    while ((c = getc(fp)) != EOF && c != '\n' && dst < end) {
+    while ((c = getc(fp)) != EOF && c != '\n' && dst < end)
         *dst++ = c;
-        len++;
-    }
     *dst = '\0';
-    return(len);
+    return((c == EOF && dst == buffer) ? EOF : dst - buffer);
 }
 
 void input_handler(int singal_no){
