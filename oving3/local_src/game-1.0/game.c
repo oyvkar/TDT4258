@@ -226,20 +226,28 @@ void close_controller(){
 }
 
 void input_handler(){
+    int bytes_read;
+    int nbytes = 30;
     char *buffer;
-    while (getdelim(&buffer, 0, '\t', gamepad)) {
-        if (buffer == "NONE") {
-            input_a = 0;
-            input_b = 0;
+    buffer = (char *) malloc(nbytes+1);
+    while (getline(&buffer, &nbytes, gamepad)) {
+        if (buffer == "") {
+            printf("INPUT: Empty buffer\n");
             free(buffer);
             return;
         }
-        if (buffer == "SW2") input_a = 1;
-        if (buffer == "SW4") input_a = 2;
-        if (buffer == "SW6") input_b = 1;
-        if (buffer == "SW8") input_b = 2;
+        if  (buffer == "SW2: 1") input_a = 1;
+        if ((buffer == "SW2: 0") && (input_a == 1)) input_a = 0;
+        if  (buffer == "SW4: 0") input_a = 2;
+        if ((buffer == "SW4: 0") && (input_a == 2)) input_a = 0;
+
+        if  (buffer == "SW6: 1") input_b = 1;
+        if ((buffer == "SW6: 0") && (input_b == 1)) input_b = 0;
+        if  (buffer == "SW8: 1") input_b = 2;
+        if ((buffer == "SW8: 0") && (input_b == 2)) input_b = 0;
+        printf("INPUT: %s", buffer);
+        free(buffer);
     }
-    free(buffer);
 }
 
 uint16_t *screen;
