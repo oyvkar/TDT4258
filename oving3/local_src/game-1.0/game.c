@@ -10,7 +10,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
-
+#include <string.h>
 #include "game.h"
 
 
@@ -67,11 +67,11 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-  //  open_controller();    
+//    open_controller();    
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
- //   close_controller();
+//    close_controller();
     close_screen();
     exit(EXIT_SUCCESS);
     return 0;
@@ -221,7 +221,7 @@ void initialize(bool first)
 }
 
 void open_controller(){
-    gamepad = fopen("/dev/gamepad", "r");
+    gamepad = fopen("/dev/gamepad", "rb");
     if(!gamepad){
         printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
@@ -229,8 +229,8 @@ void open_controller(){
     printf("Controller opened\n");
 //    signal(SIGIO, &input_handler);
 //    fcntl(STDIN_FILENO, F_SETOWN, getpid());
-//    oflags = fcntl(STDIN_FILENO, F_GETFL);
-//    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+ //   oflags = fcntl(STDIN_FILENO, F_GETFL);
+  //  fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
 }
 
 void close_controller(){
@@ -242,16 +242,13 @@ void close_screen() {
 }
 
 void input_handler(int singal_no){
-    int read_bytes;
-    size_t nbytes = 30;
-    char *buffer;
+    char buffer[30];
     open_controller();
-    buffer = (char *) malloc(nbytes+1);
 //    printf("INPUT: Signal\n");
-    while ((read_bytes = getline(&buffer,&nbytes, gamepad)) != -1) {
-       // if (read_bytes == 0)
-       //     break;
-        printf("INPUT: Len %i\t%s\n",read_bytes,buffer);
+    while ( fgets(buffer, 30, gamepad) != NULL ) {
+       if (strlen(buffer) != 7)
+            break;
+        printf("INPUT: Len %i\t%s\n",strlen(buffer),buffer);
         if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
         if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
         if ((buffer[2] == '4') && (buffer[5] == '1') )  input_a = 2;
@@ -261,7 +258,6 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
-    free(buffer);
     close_controller();
 }
 void initialize_screen(){
