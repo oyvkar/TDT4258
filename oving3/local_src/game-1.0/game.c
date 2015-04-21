@@ -82,6 +82,7 @@ void play(){
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
         //TODO:
        // single_color(rand()%256);
+        input_handler();
         movebat();
         printf("%i %i \n", input_a, input_b);
         moveball();
@@ -216,16 +217,16 @@ void initialize(bool first)
 }
 
 void open_controller(){
-    gamepad = fopen("/dev/gamepad", "rb");
+    gamepad = fopen("/dev/gamepad", "r");
     if(!gamepad){
         printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
     }
     printf("Controller opened\n");
-    signal(SIGIO, &input_handler);
-    fcntl(STDIN_FILENO, F_SETOWN, getpid());
-    oflags = fcntl(STDIN_FILENO, F_GETFL);
-    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+//    signal(SIGIO, &input_handler);
+//    fcntl(STDIN_FILENO, F_SETOWN, getpid());
+//    oflags = fcntl(STDIN_FILENO, F_GETFL);
+//    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
 }
 
 void close_controller(){
@@ -242,7 +243,7 @@ void input_handler(){
     char *buffer;
 
     buffer = (char *) malloc(nbytes+1);
-    printf("INPUT: Signal\n");
+//    printf("INPUT: Signal\n");
     while ((read_bytes = getline(&buffer,&nbytes, gamepad)) != -1) {
         if (read_bytes == 0)
             break;
