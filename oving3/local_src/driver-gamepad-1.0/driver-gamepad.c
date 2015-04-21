@@ -221,7 +221,10 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
     /* Number of bytes actually written to the buffer */
    int bytes_read = 0;
    /* If we're at the end of the message, return 0 signifying end of file */
-   if (*msg_ptr == 0) return 0;
+   if (*msg_ptr == 0) {
+       msg_ptr = buttons;
+       return 0;
+   }
 
    /* Actually put the data into the buffer */
    while (length && *msg_ptr)  {
@@ -229,8 +232,9 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
         /* The buffer is in the user data segment, not the kernel segment;
          * assignment won't work.  We have to use put_user which copies data from
          * the kernel data segment to the user data segment. */
-         put_user(*(msg_ptr++), buffer++);
-
+         put_user(*msg_ptr, buffer++);
+         *msg_ptr = '\0';
+         msg_ptr++;
          length--;
          bytes_read++;
    }
