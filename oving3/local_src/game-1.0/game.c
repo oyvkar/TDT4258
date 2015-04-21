@@ -60,15 +60,18 @@ int input_b;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
+    open_controller();    
+    initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
-	exit(EXIT_SUCCESS);
+    close_controller();
+    close_screen();
+    exit(EXIT_SUCCESS);
     return 0;
 }
 
 void play(){
     initialize(true);
-    open_controller();
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
         //TODO:
        // single_color(rand()%256);
@@ -81,7 +84,6 @@ void play(){
    
         //sleep(0.01);  // Value does not represent real time
     }
-    close_controller();
 }
 
 void movebat(void){
@@ -200,7 +202,6 @@ void initialize(bool first)
     if(first){
         gamescore.playerAscore = 0;
         gamescore.playerBscore = 0;
-        initialize_screen();//Initializes the screen
     }
     single_color(0);//sets the playfield to black
     draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
@@ -222,6 +223,10 @@ void open_controller(){
 
 void close_controller(){
     fclose(gamepad);
+}
+
+void close_screen() {
+    fclose(fb);
 }
 
 void input_handler(){
