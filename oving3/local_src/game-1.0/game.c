@@ -90,14 +90,14 @@ void play(){
 void movebat(void){
     switch (input_a) {
         case 1: //Move left bat up
-            if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
+            if ((playerbat_a.Ypos - playerbat_a.speed) > 0) {   //Checks that the bat doesn't move beyond the screen
                 draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos = playerbat_a.Ypos - playerbat_a.speed;
            }
             break;
         case 2: //Move left bat down
-            if (playerbat_a.Ypos + playerbat_a.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
+            if (playerbat_a.Ypos + playerbat_a.length + playerbat_a.speed < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                 draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position 
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos = playerbat_a.Ypos + playerbat_a.speed;
@@ -108,14 +108,14 @@ void movebat(void){
     }
     switch (input_b) {
         case 1: //Move right bat up
-            if(playerbat_b.Ypos > 0) {    
+            if((playerbat_b.Ypos-playerbat_b.speed) > 0) {    
                 draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos = playerbat_b.oldYpos - playerbat_b.speed;
                 }
            break;
         case 2: //Move right bat down
-            if (playerbat_b.Ypos + playerbat_b.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
+            if (playerbat_b.Ypos + playerbat_b.length + playerbat_b.speed < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                 draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos = playerbat_b.oldYpos + playerbat_b.speed;
