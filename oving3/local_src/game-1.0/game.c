@@ -85,8 +85,6 @@ void play(){
         printf("%i %i \n", input_a, input_b);
         moveball();
         handlePhysics();
-        draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white, false);
-        draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white, true); //Waits until all commits to screen have been added, then calls the update
         update_screen();  // After all updates to the game have been made, update the display
     }
 }
@@ -198,16 +196,22 @@ void initialize(bool first)
     if(rand()%2 == 0)ball_a.Xspeed = -ball_a.Xspeed;
     ball_a.Yspeed = 0;
     ball_a.Ypos = 119;  //Starts the ball in the centre
+    ball_a.oldYpos = ball_a.Ypos;
     ball_a.Xpos = 159;
+    ball_a.oldXpos = ball_a.Xpos;
 
     playerbat_a.length = 90;
     playerbat_a.width = 15;
     playerbat_b.length = 90;
     playerbat_b.width = 15;
     playerbat_a.Xpos = 20;
+    playerbat_a.oldXpos = playerbat_a.Xpos;
     playerbat_a.Ypos = 119;
+    playerbat_a.oldYpos = playerbat_a.Ypos;
     playerbat_b.Xpos = 300;
+    playerbat_b.oldXpos = playerbat_b.Xpos;
     playerbat_b.Ypos = 119;
+    playerbat_b.oldYpos = playerbat_b.Ypos;
     playerbat_a.speed = 5;
     playerbat_b.speed = 5;
     
@@ -217,7 +221,7 @@ void initialize(bool first)
     }
     single_color(0);//sets the playfield to black
     draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
-    draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, true);
+    draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, false);
 }
 
 void open_controller(){
