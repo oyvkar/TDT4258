@@ -139,9 +139,7 @@ static int __init gamepad_driver_init(void)
 		return -1;
 	}
 
-	//might be wise to clear interrupt flags here
-
-    
+    iowrite32(0xFF, gpio_int_mem + IFC_OFFSET); //Clears interrupt flags   
     
 	//Activate driver and register allocations
     printk(KERN_DEBUG "GAMEPAD:Activating character device\n");
@@ -288,7 +286,7 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
 module_init(gamepad_driver_init);
 module_exit(gamepad_driver_cleanup);
 
-MODULE_AUTHOR("TDT4258 Group ??");
+MODULE_AUTHOR("TDT4258 Group 22");
 MODULE_DESCRIPTION("Module for controlling a gamepad provided in the course TDT4258 at NTNU");
 MODULE_LICENSE("GPL");
 
