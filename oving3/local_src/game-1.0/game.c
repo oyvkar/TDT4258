@@ -67,11 +67,11 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-//    open_controller();    
+    open_controller();    
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
-//    close_controller();
+    close_controller();
     close_screen();
     exit(EXIT_SUCCESS);
     return 0;
@@ -80,9 +80,9 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
-        input_handler();
+    //    input_handler();
         movebat();
-    //    printf("%i %i \n", input_a, input_b);
+        printf("%i %i \n", input_a, input_b);
         moveball();
         handlePhysics();
         update_screen();  // After all updates to the game have been made, update the display
@@ -230,11 +230,11 @@ void open_controller(){
         printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
     }
-  //  printf("Controller opened\n");
-//    signal(SIGIO, &input_handler);
-//    fcntl(STDIN_FILENO, F_SETOWN, getpid());
- //   oflags = fcntl(STDIN_FILENO, F_GETFL);
-  //  fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+    printf("Controller opened\n");
+    signal(SIGIO, &input_handler);
+    fcntl(STDIN_FILENO, F_SETOWN, getpid());
+    oflags = fcntl(STDIN_FILENO, F_GETFL);
+    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
 }
 
 void close_controller(){
@@ -247,8 +247,8 @@ void close_screen() {
 
 void input_handler(int singal_no){
     char buffer[30];
-    open_controller();
-//    printf("INPUT: Signal\n");
+ //   open_controller();
+    printf("INPUT: Signal\n");
     while ( fgets(buffer, 30, gamepad) != NULL ) {
        if (strlen(buffer) != 7)
             break;
@@ -262,7 +262,7 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
-    close_controller();
+ //   close_controller();
 }
 void initialize_screen(){
     
