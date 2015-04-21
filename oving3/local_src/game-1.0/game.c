@@ -255,23 +255,13 @@ void close_screen() {
     close(fb);
 }
 
-int get_line(FILE *fp, char *buffer, size_t buflen)
-{
-    char *end = buffer + buflen - 1; /* Allow space for null terminator */
-    char *dst = buffer;
-    int c;
-    while ((c = getc(fp)) != EOF && c != '\n' && dst < end)
-        *dst++ = c;
-    *dst = '\0';
-    return((c == EOF && dst == buffer) ? EOF : dst - buffer);
-}
-
 void input_handler(int singal_no){
     char buffer[30];
+ //   open_controller();
     printf("INPUT: Signal\n");
-    while (get_line(gamepad, buffer, 30) ) { 
-       //if (strlen(buffer) != 7)
-       //     break;
+    while ( fgets(buffer, 30, gamepad) != NULL ) {
+       if (strlen(buffer) != 7)
+            break;
         printf("INPUT: Len %i\t%s\n",strlen(buffer),buffer);
         if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
         if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
@@ -282,6 +272,7 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
+//    close_controller();
 }
 void initialize_screen(){
     

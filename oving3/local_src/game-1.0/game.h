@@ -14,5 +14,4 @@ void input_handler();
 void open_controller();
 void close_controller();
 void close_screen();
-int get_line(FILE *fp, char *buffer, size_t buflen);
 #endif
