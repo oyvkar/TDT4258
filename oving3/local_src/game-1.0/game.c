@@ -57,6 +57,13 @@ long oflags;
 int input_a;
 int input_b;
 
+uint16_t *screen;
+struct fb_copyarea rect;
+struct fb_var_screeninfo screen_info;
+int fb;
+int screen_size;
+
+
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
@@ -253,13 +260,6 @@ void input_handler(){
         free(buffer);
     }
 }
-
-uint16_t *screen;
-struct fb_copyarea rect;
-struct fb_var_screeninfo screen_info;
-int fd;
-int screen_size;
-
 void initialize_screen(){
     
     rect.dx = 0;
@@ -267,12 +267,12 @@ void initialize_screen(){
     rect.width = 320;
     rect.height = 240;
     
-    fd = open("/dev/fb0", O_RDWR);
-    if (!fd) {
+    fb = open("/dev/fb0", O_RDWR);
+    if (!fb) {
         printf("Could not open file containing framebuffer device \n");
         exit(EXIT_FAILURE);
     }
-    if(ioctl(fd, FBIOGET_VSCREENINFO, &screen_info) == -1){
+    if(ioctl(fb, FBIOGET_VSCREENINFO, &screen_info) == -1){
         printf("Could not aquire screen info \n");
         exit(EXIT_FAILURE);
     }
@@ -281,12 +281,12 @@ void initialize_screen(){
     screen_size = (320*240) * screen_info.bits_per_pixel/8;
 
 
-    screen = (uint16_t*) mmap(NULL, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    screen = (uint16_t*) mmap(NULL, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0);
     printf("Screen successfully initialized\n");
 }
 
 void update_screen(){
-    ioctl(fd,0x4680,&rect);
+    ioctl(fb,0x4680,&rect);
     return;
 }
 void single_color(uint16_t color){
