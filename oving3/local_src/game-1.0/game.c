@@ -231,10 +231,20 @@ void open_controller(){
         exit(EXIT_FAILURE);
     }
     printf("Controller opened\n");
-    signal(SIGIO, &input_handler);
-    fcntl(STDIN_FILENO, F_SETOWN, getpid());
-    oflags = fcntl(STDIN_FILENO, F_GETFL);
-    fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
+     
+    if(signal(SIGIO, &input_handler) == SIG_ERR){
+        printf("Failed to create signal handler\n");
+        exit(EXIT_FAILURE);
+    }
+    if(fcntl(fileno(gamepad), F_SETOWN, getpid()) == -1){
+        printf("Faild to set owner\n");
+        exit(EXIT_FAILURE);
+    }
+    long oflags = fcntl(fileno(gamepad), F_GETFL);
+    if(fcntl(fileno(gamepad), F_SETFL, oflags | FASYNC) == -1){
+        printf("Error setting FASYNC flag\n");
+        exit(EXIT_FAILURE);
+    }    
 }
 
 void close_controller(){
