@@ -67,11 +67,11 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-    open_controller();    
+  //  open_controller();    
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
-    close_controller();
+ //   close_controller();
     close_screen();
     exit(EXIT_SUCCESS);
     return 0;
@@ -80,7 +80,9 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
- //       input_handler();
+        open_controller();
+        input_handler();
+        close_controller();
         movebat();
         printf("%i %i \n", input_a, input_b);
         moveball();
@@ -231,7 +233,7 @@ void open_controller(){
         exit(EXIT_FAILURE);
     }
     printf("Controller opened\n");
-        
+/*        
     if(signal(SIGIO, &input_handler) == SIG_ERR){
         printf("Failed to create signal handler\n");
         exit(EXIT_FAILURE);
@@ -244,7 +246,8 @@ void open_controller(){
     if(fcntl(fileno(gamepad), F_SETFL, oflags | FASYNC) == -1){
         printf("Error setting FASYNC flag\n");
         exit(EXIT_FAILURE);
-    }    
+    }
+*/
 }
 
 void close_controller(){
@@ -261,7 +264,7 @@ int get_line(FILE *fp, char *buffer, size_t buflen)
     char *dst = buffer;
     int c;
     int len;
-    while ((c = fgetc(fp)) != EOF && c != '\n' && dst < end) {
+    while ((c = getc(fp)) != EOF && c != '\n' && dst < end) {
         *dst++ = c;
         len++;
     }
@@ -272,9 +275,10 @@ int get_line(FILE *fp, char *buffer, size_t buflen)
 void input_handler(int singal_no){
     char buffer[30];
     printf("INPUT: Signal\n");
-    while (get_line(gamepad, buffer, 30) ) { 
-       //if (strlen(buffer) != 7)
-       //     break;
+    int len;
+    while ( len = get_line(gamepad, buffer, 30) ) { 
+       if (len != 7)
+            break;
         printf("INPUT: Len %i\t%s\n",strlen(buffer),buffer);
         if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
         if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
