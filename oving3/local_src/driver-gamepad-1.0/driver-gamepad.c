@@ -35,7 +35,7 @@ void __iomem *gpio_portc_mem;
 void __iomem *gpio_int_mem;
 static int driverOpen = 0;
 static bool buttonState[8];
-char buttons[33];
+char buttons[100];
 char *msg_ptr;
 struct fasync_struct* async;
 
