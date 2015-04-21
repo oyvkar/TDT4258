@@ -80,8 +80,6 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
-        //TODO:
-       // single_color(rand()%256);
         input_handler();
         movebat();
         printf("%i %i \n", input_a, input_b);
@@ -89,8 +87,7 @@ void play(){
         handlePhysics();
         draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white, false);
         draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white, true); //Waits until all commits to screen have been added, then calls the update
-   
-        //sleep(0.01);  // Value does not represent real time
+        update_screen();  // After all updates to the game have been made, update the display
     }
 }
 
@@ -98,16 +95,15 @@ void movebat(void){
     switch (input_a) {
         case 1: //Move left bat up
             if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position
                 playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos --;
            }
             break;
         case 2: //Move left bat down
             if (playerbat_a.Ypos + playerbat_a.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
-               draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);
-                
-               playerbat_a.oldYpos = playerbat_a.Ypos;
+                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position 
+                playerbat_a.oldYpos = playerbat_a.Ypos;
                 playerbat_a.Ypos ++;
                }
             break;
@@ -117,22 +113,24 @@ void movebat(void){
     switch (input_b) {
         case 1: //Move right bat up
             if(playerbat_b.Ypos > 0) {    
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
                 playerbat_b.oldYpos = playerbat_b.Ypos;
                 playerbat_b.Ypos --;
                 }
            break;
         case 2: //Move right bat down
             if (playerbat_b.Ypos + playerbat_b.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
-                 draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);
-                 playerbat_b.oldYpos = playerbat_b.Ypos;
-                 playerbat_b.Ypos ++;
+                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
+                playerbat_b.oldYpos = playerbat_b.Ypos;
+                playerbat_b.Ypos ++;
            }
             break;
         default:
             break;
             
         }
+    draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white, false); // Draws the new positions for the paddles
+    draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white, false);
     return;
 
 
