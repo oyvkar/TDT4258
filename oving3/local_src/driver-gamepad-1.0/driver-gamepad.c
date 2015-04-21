@@ -37,6 +37,7 @@ static int driverOpen = 0;
 static bool buttonState[8];
 char buttons[100];
 char *msg_ptr;
+char *btn_ptr;
 struct fasync_struct* async;
 
 static struct file_operations fops = {
@@ -222,7 +223,8 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
    int bytes_read = 0;
    /* If we're at the end of the message, return 0 signifying end of file */
    if (*msg_ptr == 0) {
-       msg_ptr = buttons;
+       msg_ptr = &buttons;
+       btn_ptr = &buttons;
        return 0;
    }
 
@@ -248,10 +250,10 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
 // Fill buffer with changes in button state
 static void button_map(void) {
     uint8_t data;
-    char *btn_ptr;
-    if (btn_ptr > &buttons + 30) {
-        btn_ptr = &buttons;
-        msg_ptr = &buttons;
+
+    if (btn_ptr > (buttons + 60)) {
+        btn_ptr = buttons;
+        msg_ptr = buttons;
     }
 
     data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
