@@ -228,7 +228,8 @@ void input_handler(){
     char *buffer;
 
     buffer = (char *) malloc(nbytes+1);
-    while (getline(&buffer,&nbytes, gamepad) == 6) {
+    printf("INPUT: Signal\n");
+    while (getline(&buffer,&nbytes, gamepad) == 7) {
         if (buffer == "") {
             printf("INPUT: Empty buffer\n");
             free(buffer);
