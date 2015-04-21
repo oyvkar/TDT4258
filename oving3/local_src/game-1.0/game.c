@@ -67,11 +67,11 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-    open_controller();    
+  //  open_controller();    
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
-    close_controller();
+ //   close_controller();
     close_screen();
     exit(EXIT_SUCCESS);
     return 0;
@@ -241,7 +241,7 @@ void input_handler(){
     int read_bytes;
     size_t nbytes = 30;
     char *buffer;
-
+    open_controller();
     buffer = (char *) malloc(nbytes+1);
 //    printf("INPUT: Signal\n");
     while ((read_bytes = getline(&buffer,&nbytes, gamepad)) != -1) {
@@ -258,6 +258,7 @@ void input_handler(){
         if ((buffer[2] == '6') && (buffer[5] == '0') && (input_b == 2))  input_b = 0;
     }
     free(buffer);
+    close_controller();
 }
 void initialize_screen(){
     
