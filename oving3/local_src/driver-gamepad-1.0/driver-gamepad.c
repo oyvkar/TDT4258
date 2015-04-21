@@ -252,7 +252,7 @@ static void button_map(void) {
     for (i = 0; i < 8; i++) {
         if( (data & (1 << i)) != buttonState[i]) {
             sprintf(btn_ptr,"SW%i: %i\n", i+1, buttonState[i]);
-            buttonState[i] = ~buttonState[i];
+            buttonState[i] = !buttonState[i];
             btn_ptr += 7;
         }
     }
