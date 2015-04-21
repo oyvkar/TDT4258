@@ -200,10 +200,10 @@ void initialize(bool first)
     ball_a.Xpos = 159;
     ball_a.oldXpos = ball_a.Xpos;
 
-    playerbat_a.length = 90;
-    playerbat_a.width = 15;
-    playerbat_b.length = 90;
-    playerbat_b.width = 15;
+    playerbat_a.length = 60;
+    playerbat_a.width = 10;
+    playerbat_b.length = 60;
+    playerbat_b.width = 10;
     playerbat_a.Xpos = 20;
     playerbat_a.oldXpos = playerbat_a.Xpos;
     playerbat_a.Ypos = 119;
@@ -212,8 +212,8 @@ void initialize(bool first)
     playerbat_b.oldXpos = playerbat_b.Xpos;
     playerbat_b.Ypos = 119;
     playerbat_b.oldYpos = playerbat_b.Ypos;
-    playerbat_a.speed = 5;
-    playerbat_b.speed = 5;
+    playerbat_a.speed = 25;
+    playerbat_b.speed = 25;
     
     if(first){
         gamescore.playerAscore = 0;
