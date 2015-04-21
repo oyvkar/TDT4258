@@ -244,7 +244,7 @@ void input_handler(){
 
     buffer = (char *) malloc(nbytes+1);
 //    printf("INPUT: Signal\n");
-    while ((read_bytes = fgetline(&buffer,&nbytes, gamepad)) != -1) {
+    while ((read_bytes = getline(&buffer,&nbytes, gamepad)) != -1) {
        // if (read_bytes == 0)
        //     break;
         printf("INPUT: Len %i\t%s\n",read_bytes,buffer);
