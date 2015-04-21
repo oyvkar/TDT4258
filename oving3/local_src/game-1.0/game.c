@@ -244,10 +244,10 @@ void input_handler(){
 
     buffer = (char *) malloc(nbytes+1);
 //    printf("INPUT: Signal\n");
-    while ((read_bytes = getline(&buffer,&nbytes, gamepad)) != -1) {
-        if (read_bytes == 0)
-            break;
-        printf("IINPUT: Len %i\t%s\n",read_bytes,buffer);
+    while ((read_bytes = fgetline(&buffer,&nbytes, gamepad)) != -1) {
+       // if (read_bytes == 0)
+       //     break;
+        printf("INPUT: Len %i\t%s\n",read_bytes,buffer);
         if ((buffer[2] == '1') && (buffer[5] == '1')                  )  input_a = 1;
         if ((buffer[2] == '1') && (buffer[5] == '0') && (input_a == 1))  input_a = 0;
         if ((buffer[2] == '2') && (buffer[5] == '1')                  )  input_a = 2;
