@@ -242,23 +242,18 @@ void input_handler(){
 
     buffer = (char *) malloc(nbytes+1);
     printf("INPUT: Signal\n");
-    while (getline(&buffer,&nbytes, gamepad)) {
-        if (buffer == "") {
-            printf("INPUT: Empty buffer\n");
-            free(buffer);
-            return;
-        }
-        if ((buffer[2] == '1') && (buffer[4] == '1')                  )  input_a = 1;
-        if ((buffer[2] == '1') && (buffer[4] == '0') && (input_a == 1))  input_a = 0;
-        if ((buffer[2] == '2') && (buffer[4] == '1')                  )  input_a = 2;
-        if ((buffer[2] == '2') && (buffer[4] == '0') && (input_a == 2))  input_a = 0;
-        if ((buffer[2] == '4') && (buffer[4] == '1')                  )  input_b = 1;
-        if ((buffer[2] == '4') && (buffer[4] == '0') && (input_b == 1))  input_b = 0;
-        if ((buffer[2] == '6') && (buffer[4] == '1')                  )  input_b = 2;
-        if ((buffer[2] == '6') && (buffer[4] == '0') && (input_b == 2))  input_b = 0;
+    while (getline(&buffer,&nbytes, gamepad) == 7) {
+        if ((buffer[2] == '1') && (buffer[5] == '1')                  )  input_a = 1;
+        if ((buffer[2] == '1') && (buffer[5] == '0') && (input_a == 1))  input_a = 0;
+        if ((buffer[2] == '2') && (buffer[5] == '1')                  )  input_a = 2;
+        if ((buffer[2] == '2') && (buffer[5] == '0') && (input_a == 2))  input_a = 0;
+        if ((buffer[2] == '4') && (buffer[5] == '1')                  )  input_b = 1;
+        if ((buffer[2] == '4') && (buffer[5] == '0') && (input_b == 1))  input_b = 0;
+        if ((buffer[2] == '6') && (buffer[5] == '1')                  )  input_b = 2;
+        if ((buffer[2] == '6') && (buffer[5] == '0') && (input_b == 2))  input_b = 0;
         printf("INPUT: %s", buffer);
-        free(buffer);
     }
+    free(buffer);
 }
 void initialize_screen(){
     
