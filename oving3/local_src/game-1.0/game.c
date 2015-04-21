@@ -260,7 +260,6 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
-    free(buffer);
     close_controller();
 }
 void initialize_screen(){
