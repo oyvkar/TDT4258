@@ -249,13 +249,16 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
 static void button_map(void) {
     uint8_t data;
     char *btn_ptr;
-    btn_ptr = &buttons;
+    if (btn_ptr > &buttons + 30) {
+        btn_ptr = &buttons;
+        msg_ptr = &buttons;
+    }
 
     data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
     int i;
     for (i = 0; i < 8; i++) {
         if( (data & (1 << i)) != buttonState[i]) {
-            sprintf(btn_ptr,"SW%i: %i\n", i+1, buttonState[i]);
+            sprintf(btn_ptr,"SW%i: %i\n", i+1, !buttonState[i]);
             buttonState[i] = !buttonState[i];
             btn_ptr += 7;
         }
