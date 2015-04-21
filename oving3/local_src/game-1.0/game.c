@@ -248,7 +248,7 @@ void input_handler(int singal_no){
     open_controller();
 //    printf("INPUT: Signal\n");
     while ( fgets(buffer, 30, gamepad) != NULL ) {
-       if (strlen(buffer) == 7)
+       if (strlen(buffer) != 7)
             break;
         printf("INPUT: Len %i\t%s\n",strlen(buffer),buffer);
         if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
