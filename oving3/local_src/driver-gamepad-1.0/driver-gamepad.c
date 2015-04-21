@@ -34,6 +34,7 @@ void __iomem *gpio_porta_mem;
 void __iomem *gpio_portc_mem;
 void __iomem *gpio_int_mem;
 static int driverOpen = 0;
+static bool buttonState[8];
 char buttons[33];
 char *msg_ptr;
 struct fasync_struct* async;
@@ -240,6 +241,7 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
     return 1; // Number of bytes written
 }
 
+// Fill buffer with changes in button state
 static void button_map(void) {
     uint8_t data;
     char *btn_ptr;
@@ -247,19 +249,14 @@ static void button_map(void) {
 
     data = ~ioread8(gpio_portc_mem + DIN_OFFSET);
     int i;
-    if ( data == 0) {
-        strcpy(buttons, "NONE\n");
-        return;
-    }
     for (i = 0; i < 8; i++) {
-        if( data & (1 << i)) {
-            sprintf(btn_ptr, "SW%i\t", i+1);
-            btn_ptr += 4;
+        if( (data & (1 << i)) != buttonState[i]) {
+            sprintf(btn_ptr,"SW%i: %i\n", i+1, buttonState[i]);
+            buttonState[i] = ~buttonState[i];
+            btn_ptr += 7;
         }
     }
-    *btn_ptr = '\n';
 }
-
 
 //user program writes to the driver
 static ssize_t gp_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
