@@ -50,12 +50,12 @@ struct score{
     int playerBscore;
 }gamescore;
 
-uint16_t white = 0xffff;
-uint16_t black = 0;
+const uint16_t white = 0xffff;
+const uint16_t black = 0;
 FILE* gamepad;
 long oflags;
-int input_a;
-int input_b;
+volatile int input_a;
+volatile int input_b;
 
 uint16_t *screen;
 struct fb_copyarea rect;
