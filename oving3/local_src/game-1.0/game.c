@@ -261,7 +261,7 @@ int get_line(FILE *fp, char *buffer, size_t buflen)
     char *dst = buffer;
     int c;
     int len;
-    while ((c = getc(fp)) != EOF && c != '\n' && dst < end) {
+    while ((c = fgetc(fp)) != EOF && c != '\n' && dst < end) {
         *dst++ = c;
         len++;
     }
