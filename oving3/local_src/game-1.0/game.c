@@ -254,14 +254,14 @@ void input_handler(){
        // if (read_bytes == 0)
        //     break;
         printf("INPUT: Len %i\t%s\n",read_bytes,buffer);
-        if ((buffer[2] == '1') && (buffer[5] == '1')                  )  input_a = 1;
-        if ((buffer[2] == '1') && (buffer[5] == '0') && (input_a == 1))  input_a = 0;
-        if ((buffer[2] == '2') && (buffer[5] == '1')                  )  input_a = 2;
-        if ((buffer[2] == '2') && (buffer[5] == '0') && (input_a == 2))  input_a = 0;
-        if ((buffer[2] == '4') && (buffer[5] == '1')                  )  input_b = 1;
-        if ((buffer[2] == '4') && (buffer[5] == '0') && (input_b == 1))  input_b = 0;
-        if ((buffer[2] == '6') && (buffer[5] == '1')                  )  input_b = 2;
-        if ((buffer[2] == '6') && (buffer[5] == '0') && (input_b == 2))  input_b = 0;
+        if ((buffer[2] == '1') && (buffer[5] == '1') )  input_a = 1;
+        if ((buffer[2] == '1') && (buffer[5] == '0') )  input_a = 0;
+        if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 2;
+        if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
+        if ((buffer[2] == '4') && (buffer[5] == '1') )  input_b = 1;
+        if ((buffer[2] == '4') && (buffer[5] == '0') )  input_b = 0;
+        if ((buffer[2] == '6') && (buffer[5] == '1') )  input_b = 2;
+        if ((buffer[2] == '6') && (buffer[5] == '0') )  input_b = 0;
     }
     free(buffer);
     close_controller();
