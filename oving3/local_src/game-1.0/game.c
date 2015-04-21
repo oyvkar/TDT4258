@@ -67,11 +67,11 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-    open_controller();    
+//    open_controller();    
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
-    close_controller();
+//    close_controller();
     close_screen();
     exit(EXIT_SUCCESS);
     return 0;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
- //       input_handler();
+        input_handler();
         movebat();
         printf("%i %i \n", input_a, input_b);
         moveball();
@@ -126,7 +126,7 @@ void movebat(void){
         default:
             break;
             
-    }
+        }
     draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white, false); // Draws the new positions for the paddles
     draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white, false);
     return;
@@ -231,20 +231,10 @@ void open_controller(){
         exit(EXIT_FAILURE);
     }
     printf("Controller opened\n");
-        
-    if(signal(SIGIO, &input_handler) == SIG_ERR){
-        printf("Failed to create signal handler\n");
-        exit(EXIT_FAILURE);
-    }
-    if(fcntl(fileno(gamepad), F_SETOWN, getpid()) == -1){
-        printf("Faild to set owner\n");
-        exit(EXIT_FAILURE);
-    }
-    long oflags = fcntl(fileno(gamepad), F_GETFL);
-    if(fcntl(fileno(gamepad), F_SETFL, oflags | FASYNC) == -1){
-        printf("Error setting FASYNC flag\n");
-        exit(EXIT_FAILURE);
-    }    
+//    signal(SIGIO, &input_handler);
+//    fcntl(STDIN_FILENO, F_SETOWN, getpid());
+ //   oflags = fcntl(STDIN_FILENO, F_GETFL);
+  //  fcntl(STDIN_FILENO, F_SETFL, oflags | FASYNC);
 }
 
 void close_controller(){
@@ -257,8 +247,8 @@ void close_screen() {
 
 void input_handler(int singal_no){
     char buffer[30];
- //   open_controller();
-    printf("INPUT: Signal\n");
+    open_controller();
+//    printf("INPUT: Signal\n");
     while ( fgets(buffer, 30, gamepad) != NULL ) {
        if (strlen(buffer) != 7)
             break;
@@ -272,7 +262,7 @@ void input_handler(int singal_no){
         if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
         if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
     }
-//    close_controller();
+    close_controller();
 }
 void initialize_screen(){
     
