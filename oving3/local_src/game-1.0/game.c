@@ -87,8 +87,8 @@ void play(){
         printf("%i %i \n", input_a, input_b);
         moveball();
         handlePhysics();
-        draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
-        draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, true); //Waits until all commits to screen have been added, then calls the update
+        draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white, false);
+        draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white, true); //Waits until all commits to screen have been added, then calls the update
    
         //sleep(0.01);  // Value does not represent real time
     }
@@ -119,7 +119,7 @@ void movebat(void){
             if(playerbat_b.Ypos > 0) {    
                 draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);
                 playerbat_b.oldYpos = playerbat_b.Ypos;
-                playerbat_b.Ypos ++;
+                playerbat_b.Ypos --;
                 }
            break;
         case 2: //Move right bat down
