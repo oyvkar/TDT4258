@@ -208,11 +208,12 @@ void initialize(bool first)
 }
 
 void open_controller(){
-    gamepad = fopen("/dev/gamepad", "r");
+    gamepad = fopen("/dev/gamepad", "rb");
     if(!gamepad){
-        printf("Failed to open gamepad driver! Exitin\n");
+        printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
     }
+    printf("Controller opened\n");
     signal(SIGIO, &input_handler);
     fcntl(STDIN_FILENO, F_SETOWN, getpid());
     oflags = fcntl(STDIN_FILENO, F_GETFL);
