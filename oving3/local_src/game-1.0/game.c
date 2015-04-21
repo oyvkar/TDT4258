@@ -82,7 +82,7 @@ void play(){
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
         input_handler();
         movebat();
-        printf("%i %i \n", input_a, input_b);
+    //    printf("%i %i \n", input_a, input_b);
         moveball();
         handlePhysics();
         update_screen();  // After all updates to the game have been made, update the display
@@ -95,14 +95,14 @@ void movebat(void){
             if (playerbat_a.Ypos > 0) {   //Checks that the bat doesn't move beyond the screen
                 draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position
                 playerbat_a.oldYpos = playerbat_a.Ypos;
-                playerbat_a.Ypos --;
+                playerbat_a.Ypos = playerbat_a.Ypos - playerbat_a.speed;
            }
             break;
         case 2: //Move left bat down
             if (playerbat_a.Ypos + playerbat_a.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                 draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position 
                 playerbat_a.oldYpos = playerbat_a.Ypos;
-                playerbat_a.Ypos ++;
+                playerbat_a.Ypos = playerbat_a.Ypos + playerbat_a.speed;
                }
             break;
         default:
@@ -113,14 +113,14 @@ void movebat(void){
             if(playerbat_b.Ypos > 0) {    
                 draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
                 playerbat_b.oldYpos = playerbat_b.Ypos;
-                playerbat_b.Ypos --;
+                playerbat_b.Ypos = playerbat_b.oldYpos - playerbat_b.speed;
                 }
            break;
         case 2: //Move right bat down
             if (playerbat_b.Ypos + playerbat_b.length < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
                 draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
                 playerbat_b.oldYpos = playerbat_b.Ypos;
-                playerbat_b.Ypos ++;
+                playerbat_b.Ypos = playerbat_b.oldYpos + playerbat_b.speed;
            }
             break;
         default:
@@ -155,7 +155,7 @@ void moveball(){
 
 void handlePhysics(){
     if (ball_a.Xpos - ball_a.radius <= 30) {   //Checks if the ball hits the bat
-        printf("Ball YPOS: %i\tBat YPOS: %i\tBat len: %i\n", ball_a.Ypos, playerbat_a.Ypos, playerbat_a.length);
+        //printf("Ball YPOS: %i\tBat YPOS: %i\tBat len: %i\n", ball_a.Ypos, playerbat_a.Ypos, playerbat_a.length);
        // if ((ball_a.Ypos < playerbat_a.Ypos) && (ball_a.Ypos > (playerbat_a.Ypos + playerbat_a.length))) {
        if ((playerbat_a.Ypos <= ball_a.Ypos) && (ball_a.Ypos <= (playerbat_a.Ypos + playerbat_a.length)))  {
             ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
@@ -212,8 +212,8 @@ void initialize(bool first)
     playerbat_b.oldXpos = playerbat_b.Xpos;
     playerbat_b.Ypos = 119;
     playerbat_b.oldYpos = playerbat_b.Ypos;
-    playerbat_a.speed = 25;
-    playerbat_b.speed = 25;
+    playerbat_a.speed = 5;
+    playerbat_b.speed = 5;
     
     if(first){
         gamescore.playerAscore = 0;
@@ -230,7 +230,7 @@ void open_controller(){
         printf("Failed to open gamepad driver! Exiting\n");
         exit(EXIT_FAILURE);
     }
-    printf("Controller opened\n");
+  //  printf("Controller opened\n");
 //    signal(SIGIO, &input_handler);
 //    fcntl(STDIN_FILENO, F_SETOWN, getpid());
  //   oflags = fcntl(STDIN_FILENO, F_GETFL);
