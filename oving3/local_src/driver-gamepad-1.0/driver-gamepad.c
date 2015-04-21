@@ -271,7 +271,7 @@ static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *re
     
     // Clear interrupt flags
     iowrite32(0xFF, gpio_int_mem + IFC_OFFSET);
- //   printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
+    printk(KERN_DEBUG "GAMEPAD:GPIO Interrupt\n");
     button_map();
     if (async) {
         printk(KERN_DEBUG "GAMEPAD: Sending signal\n");
