@@ -298,7 +298,7 @@ void update_screen(){
 }
 void single_color(uint16_t color){
     int i;
-    for (i = 0; i < 320*260; i++) {
+    for (i = 0; i < 320*240; i++) {
         screen[i] = color;
     }
     update_screen();
