@@ -146,7 +146,7 @@ static void __exit gamepad_driver_cleanup(void)
 
 	//Release memory
 	release_mem_region(GPIO_PC_BASE, 0x24);
-    release_mem_region(GPIO_INT_BASE, 0x20);
+    release_mem_region(GPIO_INT_BASE, 0x10);
 
 	//Destroy class and device
 	device_destroy(cl,devNumber);
