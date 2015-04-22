@@ -301,7 +301,7 @@ void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
             screen[i+j*320] = color;
         }
     }
-    printf("DRAW: Xpos: %i\t Ypos: %i\t width: %i\t height: %i\n"
+    printf("DRAW: Xpos: %i\t Ypos: %i\t width: %i\t height: %i\n", Xpos, Ypos, width, height);
     struct fb_copyarea update;
     update.dx = Xpos;
     update.dy = Ypos;
