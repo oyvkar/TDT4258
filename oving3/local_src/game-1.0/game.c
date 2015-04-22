@@ -102,7 +102,7 @@ void moveBat(Playerbat_t *bat, bool down) {
         return;
 
     if(down) {
-        draw_rectangle(bat->Xpos, bat->Ypos - bat->speed, bat->width, bat->speed, black);
+        draw_rectangle(bat->Xpos, bat->Ypos + bat->speed, bat->width, bat->speed, black);
         draw_rectangle(bat->Xpos, bat->Ypos + bat->length + bat->speed, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
         bat->Ypos += bat->speed;
@@ -205,6 +205,7 @@ void initialize(bool first)
     single_color(0);//sets the playfield to black
     draw_rectangle(playerbat[0].Xpos,playerbat[0].Ypos,playerbat[0].width,playerbat[0].length, white);
     draw_rectangle(playerbat[1].Xpos,playerbat[1].Ypos,playerbat[1].width,playerbat[1].length, white);
+    update_screen();
 }
 
 
@@ -300,7 +301,7 @@ void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
             screen[i+j*320] = color;
         }
     }
-
+    printf("DRAW: Xpos: %i\t Ypos: %i\t width: %i\t height: %i\n"
     struct fb_copyarea update;
     update.dx = Xpos;
     update.dy = Ypos;
