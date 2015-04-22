@@ -109,7 +109,7 @@ void moveBat(Playerbat_t *bat, bool down) {
     } else {
         printf("down: %i\n",down);
         printf("Bat: ypos: %i\tLength: %i\tSpeed: %i\n", bat->Ypos, bat->width, bat->speed);
-        draw_rectangle(bat->Xpos, bat->Ypos + bat->length, bat->width, bat->speed, black);
+        draw_rectangle(bat->Xpos, bat->Ypos + bat->length + bat->speed, bat->width, bat->speed, black);
         draw_rectangle(bat->Xpos, bat->Ypos, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
         bat->Ypos -= bat->speed;
