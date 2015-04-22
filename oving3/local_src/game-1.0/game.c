@@ -102,15 +102,15 @@ void moveBat(Playerbat_t *bat, bool up) {
         return;
 
     if(up) {
-        draw_rectangle(bat->oldXpos, bat->oldYpos, bat->width, bat->speed, black);
-        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length, bat->width, bat->speed, white);
+        draw_rectangle(bat->Xpos, bat->Ypos, bat->width, bat->speed, black);
+        draw_rectangle(bat->Xpos, bat->Ypos + bat->length, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
-        bat->Ypos = bat->oldYpos + bat->speed;
+        bat->Ypos += bat->speed;
     } else {
-        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length - bat->speed, bat->width, bat->speed, black);
-        draw_rectangle(bat->oldXpos, bat->oldYpos - bat->speed, bat->width, bat->speed, white);
+        draw_rectangle(bat->Xpos, bat->Ypos + bat->length - bat->speed, bat->width, bat->speed, black);
+        draw_rectangle(bat->Xpos, bat->Ypos - bat->speed, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
-        bat->Ypos = bat->oldYpos - bat->speed;
+        bat->Ypos -= bat->speed;
     }
 }
 
