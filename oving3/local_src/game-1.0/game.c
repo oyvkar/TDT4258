@@ -82,10 +82,10 @@ void bat(void){
     for(i=0; i < 2; i++) {
         switch (input[i]) {
             case 1: //Move  bat up
-                moveBat(&playerbat[i],1);
+                moveBat(&playerbat[i],0);
                 break;
             case 2: //Move bat down
-                moveBat(&playerbat[i],0);
+                moveBat(&playerbat[i],1);
                 break;
         }
     }
