@@ -73,7 +73,7 @@ void play(){
         bat();
         moveball();
         handlePhysics();
-        nanosleep((struct timespec[]){{0, 500000000}}, NULL);
+        nanosleep((struct timespec[]){{0, 100000000}}, NULL);
     }
 }
 
