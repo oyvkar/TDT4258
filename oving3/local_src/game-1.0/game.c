@@ -91,17 +91,19 @@ void bat(void){
     }
 }
 
-bool checkBatBounds(Playerbat_t *bat, bool up) {
-    if (up) 
+bool checkBatBounds(Playerbat_t *bat, bool down) {
+    if (down) 
         return (bat->Ypos + bat->length + bat->speed < playfield_a.height);   //Checks that the bat doesn't move beyond the screen
     
     return ((bat->Ypos - bat->speed) > 0);  //Checks that the bat doesn't move beyond the screen
 }
-void moveBat(Playerbat_t *bat, bool up) {
-    if ( !checkBatBounds(bat, up))
+void moveBat(Playerbat_t *bat, bool down) {
+    if ( !checkBatBounds(bat, down))
         return;
 
-    if(up) {
+    if(down) {
+        printf("down: %i\n",down);
+        printf("Bat: ypos: %i\tLength: %i\tSpeed: %i\n", bat->Ypos, bat->width, bat->speed);
         draw_rectangle(bat->Xpos, bat->Ypos, bat->width, bat->speed, black);
         draw_rectangle(bat->Xpos, bat->Ypos + bat->length, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
