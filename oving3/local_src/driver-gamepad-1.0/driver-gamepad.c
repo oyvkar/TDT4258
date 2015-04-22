@@ -22,7 +22,7 @@
 #include <asm/siginfo.h>
 
 #include "efm32gg.h"
-#include "driver-gamepad.h"i
+#include "driver-gamepad.h"
 
 
 #define SUCCESS 0
@@ -49,7 +49,9 @@ static struct file_operations fops = {
 	.release = gp_release,
     .fasync = gp_fasync
 };
-	
+
+
+// Redirects to fsync_helper
 static int gp_fasync(int fd, struct file *filp, int mode) {
     return fasync_helper(fd, filp, mode, &async);
 }
@@ -70,11 +72,6 @@ static int __init gamepad_driver_init(void)
 	
 
 	//Request memory region access for GPIO functions and port C, and check if the driver is in use by other processes
-	if(request_mem_region(GPIO_PA_BASE, 0x24,"GPIO_port_a") == 0)
-	{
-		printk(KERN_ERR "GAMEPAD: Port A memory request failed\n");
-		return -1;
-	}
 	if( request_mem_region(GPIO_PC_BASE, 0x24, "GPIO_port_c") == 0)
 	{
 		printk(KERN_ERR "GAMEPAD: Port C memory request failed\n");
@@ -99,9 +96,6 @@ static int __init gamepad_driver_init(void)
         return -1;
     }
 
-
-    printk(KERN_DEBUG "GAMEPAD:Config interrupt and GIPO\n");
-    // Set Porta A Pin 12, 13 and 14 as output
     
 	// Set Port C pin 0-7 as input
     iowrite32(0x33333333,   gpio_portc_mem + MODEL_OFFSET );
@@ -144,11 +138,13 @@ static int __init gamepad_driver_init(void)
 	return 0;
 }
 
+// Run on module unload
 static void __exit gamepad_driver_cleanup(void)
 {
 	//Deactivate driver
 	cdev_del(buttons_cdev);
-	//Free even and odd interrupts
+
+    //Free even and odd interrupts
 	free_irq(17,NULL);
 	free_irq(18,NULL);
 
@@ -157,7 +153,7 @@ static void __exit gamepad_driver_cleanup(void)
 	iowrite32(0x0, gpio_int_mem + EXTIRISE_OFFSET);
 	iowrite32(0x0, gpio_int_mem + EXTIFALL_OFFSET);
 
-	iounmap(gpio_porta_mem);
+    // Unmap virtual memory
 	iounmap(gpio_portc_mem);
     iounmap(gpio_int_mem);
 
@@ -174,34 +170,30 @@ static void __exit gamepad_driver_cleanup(void)
 }
 
 
-/* Functions for using the gamepad from userspace */
-
 // Userspace program opens driver
 static int gp_open(struct inode *inode,struct file *file){
-    if (driverOpen) {
+    // Allow only one userspace program to access the driver at the same time
+    if (driverOpen)
         return -EBUSY;
-    }
 
     try_module_get(THIS_MODULE); // Prevent module unloading while in use
-    msg_ptr = buttons;
-    driverOpen++;
-    return SUCCESS; //Configuration handled by the module_init
+    driverOpen++;                // Increment open count 
+    return SUCCESS; 
 }
 
 // Userspace program closes driver
 static int gp_release(struct inode *inode, struct file *file){
-    driverOpen--;
+    driverOpen--;            // Decrement open count
     module_put(THIS_MODULE); // Allow module unloading
-    return SUCCESS; //Configuration handled by the module_exit
+    return SUCCESS; 
 }
 
 // user program reads from the driver
 static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, loff_t *offp){
     
-    /* Number of bytes actually written to the buffer */
-   int bytes_read = 0;
+   int bytes_read = 0;      // We want to return bytes written to buffer    
 
-   // Return \0 if no new data is ready
+   // Write '\0' to buffer and return 1 if no new data is ready
    if (*msg_ptr == 0) {
        msg_ptr = &buttons;
        btn_ptr = &buttons;
@@ -209,7 +201,8 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
        return 1;
    }
 
-   /* Actually put the data into the buffer */
+   // Copy data into userspace buffer. 
+   // Stops at end of data or buffer full
    while (length && *msg_ptr)  {
          put_user(*msg_ptr, buffer++);
          *msg_ptr = '\0';
@@ -218,7 +211,6 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
          bytes_read++;
    }
 
-   /* Most read functions return the number of bytes put into the buffer */
    return bytes_read;
 }
 
@@ -226,6 +218,7 @@ static ssize_t gp_read (struct file *filp, char __user *buffer, size_t length, l
 static void button_map(void) {
     uint8_t data;
 
+    // Lazy implementation of a ringbuffer
     if (btn_ptr > (buttons + 60)) {
         btn_ptr = buttons;
         msg_ptr = buttons;
@@ -242,18 +235,19 @@ static void button_map(void) {
     }
 }
 
-//user program writes to the driver
+// User program writes to the driver
+// We do not controll any LEDs.
 static ssize_t gp_write (struct file *filp, const char __user *buff, size_t count, loff_t *offp){
-    return SUCCESS; //Not used as we do not want to write to the LEDs on the gamepad
+    return SUCCESS; 
 }
 
+
 static irq_handler_t interrupt_handler(int irq, void *dev_id, struct pt_regs *regs){
-    
-    // Clear interrupt flags
-    iowrite32(0xFF, gpio_int_mem + IFC_OFFSET);
-    button_map();
-    if (async) 
-        kill_fasync(&async, SIGIO, POLL_IN);
+    iowrite32(0xFF, gpio_int_mem + IFC_OFFSET); // Clear interrupt flags
+    button_map();                               // Map changes in button to output buffer
+
+    if (async)                                  // Signal any userspace process using FASYNC 
+        kill_fasync(&async, SIGIO, POLL_IN);   
 
     return (irq_handler_t) IRQ_HANDLED; 
 }
