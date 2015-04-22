@@ -20,20 +20,9 @@ struct playfield{
     uint16_t width;
 }playfield_a;
 
-struct playerbat{
-    uint16_t length;
-    uint16_t width;
-    uint16_t speed;   
-    
+Playerbat_t playerbat[2];
 
-    uint16_t oldXpos;
-    uint16_t oldYpos;
-
-    uint16_t Xpos;
-    uint16_t Ypos;
-}playerbat_a,playerbat_b;
-
-struct ball{
+typedef struct {
     uint16_t radius;
 
     uint16_t Xspeed;
@@ -43,7 +32,9 @@ struct ball{
     uint16_t oldYpos;
     uint16_t Xpos;
     uint16_t Ypos;
-}ball_a;
+}Ball_t;
+
+Ball_t ball;
 
 struct score{
     int playerAscore;
@@ -54,8 +45,7 @@ const uint16_t white = 0xffff;
 const uint16_t black = 0;
 FILE* gamepad;
 long oflags;
-volatile int input_a;
-volatile int input_b;
+volatile int input[2];
 
 uint16_t *screen;
 struct fb_copyarea rect;
@@ -80,85 +70,76 @@ int main(int argc, char *argv[])
 void play(){
     initialize(true);
     while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
-        movebat();
+        bat();
         moveball();
         handlePhysics();
         update_screen();  // After all updates to the game have been made, update the display
     }
 }
 
-void movebat(void){
-    switch (input_a) {
-        case 1: //Move left bat up
-            if ((playerbat_a.Ypos - playerbat_a.speed) > 0) {   //Checks that the bat doesn't move beyond the screen
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position
-                playerbat_a.oldYpos = playerbat_a.Ypos;
-                playerbat_a.Ypos = playerbat_a.Ypos - playerbat_a.speed;
-           }
-            break;
-        case 2: //Move left bat down
-            if (playerbat_a.Ypos + playerbat_a.length + playerbat_a.speed < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
-                draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, black, false);  //Erase the old position 
-                playerbat_a.oldYpos = playerbat_a.Ypos;
-                playerbat_a.Ypos = playerbat_a.Ypos + playerbat_a.speed;
-               }
-            break;
-        default:
-            break;
-    }
-    switch (input_b) {
-        case 1: //Move right bat up
-            if((playerbat_b.Ypos-playerbat_b.speed) > 0) {    
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
-                playerbat_b.oldYpos = playerbat_b.Ypos;
-                playerbat_b.Ypos = playerbat_b.oldYpos - playerbat_b.speed;
-                }
-           break;
-        case 2: //Move right bat down
-            if (playerbat_b.Ypos + playerbat_b.length + playerbat_b.speed < playfield_a.height) {   //Checks that the bat doesn't move beyond the screen
-                draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, black, false);  //Erase the old position
-                playerbat_b.oldYpos = playerbat_b.Ypos;
-                playerbat_b.Ypos = playerbat_b.oldYpos + playerbat_b.speed;
-           }
-            break;
-        default:
-            break;
-            
+void bat(void){
+    int i;
+    for(i=0; i < 2; i++) {
+        switch (input[i]) {
+            case 1: //Move  bat up
+                moveBat(&playerbat[i],1);
+                break;
+            case 2: //Move bat down
+                moveBat(&playerbat[i],0);
+                break;
         }
-    draw_rectangle(playerbat_a.oldXpos,playerbat_a.oldYpos,playerbat_a.width,playerbat_a.length, white, false); // Draws the new positions for the paddles
-    draw_rectangle(playerbat_b.oldXpos,playerbat_b.oldYpos,playerbat_b.width,playerbat_b.length, white, false);
-    return;
-
-
+    }
 }
+
+bool checkBatBounds(Playerbat_t *bat, bool up) {
+    if (up) 
+        return (bat->Ypos + bat->length + bat->speed < playfield_a.height);   //Checks that the bat doesn't move beyond the screen
+    
+    return ((bat->Ypos - bat->speed) > 0);  //Checks that the bat doesn't move beyond the screen
+}
+void moveBat(Playerbat_t *bat, bool up) {
+    if ( !checkBatBounds(bat, up))
+        return;
+
+    if(up) {
+        draw_rectangle(bat->oldXpos, bat->oldYpos, bat->width, bat->speed, black, false);
+        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length, bat->width, bat->speed, white, false);
+        bat->oldYpos = bat->Ypos;
+        bat->Ypos = bat->oldYpos + bat->speed;
+    } else {
+        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length - bat->speed, bat->width, bat->speed, black, false);
+        draw_rectangle(bat->oldXpos, bat->oldYpos - bat->speed, bat->width, bat->speed, white, false);
+        bat->oldYpos = bat->Ypos;
+        bat->Ypos = bat->oldYpos - bat->speed;
+    }
+}
+
 void moveball(){
 
     //Draw a black ball to erase the current ball
-    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, black, false);
+    draw_rectangle(ball.oldXpos-ball.radius, ball.oldYpos+ball.radius, ball.radius*2 + 1,ball.radius*2 + 1, black, false);
 
     //Update current position
-    ball_a.oldXpos = ball_a.Xpos;
-    ball_a.oldYpos = ball_a.Ypos;
+    ball.oldXpos = ball.Xpos;
+    ball.oldYpos = ball.Ypos;
     //Calculate next position
-    ball_a.Xpos = ball_a.Xpos + ball_a.Xspeed;
-    ball_a.Ypos = ball_a.Ypos + ball_a.Yspeed;
+    ball.Xpos = ball.Xpos + ball.Xspeed;
+    ball.Ypos = ball.Ypos + ball.Yspeed;
 
     //Draw a new white ball
-    draw_rectangle(ball_a.oldXpos-ball_a.radius, ball_a.oldYpos+ball_a.radius, ball_a.radius*2 + 1,ball_a.radius*2 + 1, white,false);
+    draw_rectangle(ball.oldXpos-ball.radius, ball.oldYpos+ball.radius, ball.radius*2 + 1,ball.radius*2 + 1, white,false);
  
     //Handle some ball collisions
-    if(ball_a.Ypos + ball_a.radius < 30)ball_a.Yspeed = -ball_a.Yspeed; //Bounces the ball from the top
-    if(ball_a.Ypos - ball_a.radius > playfield_a.height - 30)ball_a.Yspeed = -ball_a.Yspeed; // Bounces the ball from the bottom
+    if(ball.Ypos + ball.radius < 30)ball.Yspeed = -ball.Yspeed; //Bounces the ball from the top
+    if(ball.Ypos - ball.radius > playfield_a.height - 30)ball.Yspeed = -ball.Yspeed; // Bounces the ball from the bottom
 }
 
 void handlePhysics(){
-    if (ball_a.Xpos - ball_a.radius <= 30) {   //Checks if the ball hits the bat
-        //printf("Ball YPOS: %i\tBat YPOS: %i\tBat len: %i\n", ball_a.Ypos, playerbat_a.Ypos, playerbat_a.length);
-       // if ((ball_a.Ypos < playerbat_a.Ypos) && (ball_a.Ypos > (playerbat_a.Ypos + playerbat_a.length))) {
-       if ((playerbat_a.Ypos <= ball_a.Ypos) && (ball_a.Ypos <= (playerbat_a.Ypos + playerbat_a.length)))  {
-            ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
-            ball_a.Yspeed = rand()%4;//Random Y speed
-            if(rand()%2 == 0)ball_a.Yspeed = -ball_a.Yspeed;//Random Y direction
+    if (ball.Xpos - ball.radius <= 30) {   //Checks if the ball hits the bat
+       if ((playerbat[0].Ypos <= ball.Ypos) && (ball.Ypos <= (playerbat[0].Ypos + playerbat[0].length)))  {
+            ball.Xspeed = -ball.Xspeed; //Ball was hit, reverse the speed
+            ball.Yspeed = rand()%4;//Random Y speed
+            if(rand()%2 == 0)ball.Yspeed = -ball.Yspeed;//Random Y direction
         }
         else{  //If the ball does not hit the bat, score is awarded
            gamescore.playerBscore ++; 
@@ -166,11 +147,11 @@ void handlePhysics(){
         }
         return;
     }
-    if (ball_a.Xpos + ball_a.radius >= 295) {   //Checks if the ball hits the bat
-            if ((playerbat_b.Ypos <= ball_a.Ypos) && (ball_a.Ypos <= (playerbat_b.Ypos + playerbat_b.length)))  {
-                ball_a.Xspeed = -ball_a.Xspeed; //Ball was hit, reverse the speed
-                ball_a.Yspeed = rand()%4;//Random Y speed
-                if(rand()%2 == 0)ball_a.Yspeed = -ball_a.Yspeed;//Random Y direction
+    if (ball.Xpos + ball.radius >= 295) {   //Checks if the ball hits the bat
+            if ((playerbat[1].Ypos <= ball.Ypos) && (ball.Ypos <= (playerbat[1].Ypos + playerbat[1].length)))  {
+                ball.Xspeed = -ball.Xspeed; //Ball was hit, reverse the speed
+                ball.Yspeed = rand()%4;//Random Y speed
+                if(rand()%2 == 0)ball.Yspeed = -ball.Yspeed;//Random Y direction
             }
              else{  //If the ball does not hit the bat, score is awarded
                 gamescore.playerAscore ++; 
@@ -188,39 +169,44 @@ void initialize(bool first)
     playfield_a.height = 239;
     playfield_a.width = 319;
     
-    ball_a.radius = 5;
+    ball.radius = 5;
     
-    ball_a.Xspeed = 6;
-    if(rand()%2 == 0)ball_a.Xspeed = -ball_a.Xspeed;
-    ball_a.Yspeed = 0;
-    ball_a.Ypos = 119;  //Starts the ball in the centre
-    ball_a.oldYpos = ball_a.Ypos;
-    ball_a.Xpos = 159;
-    ball_a.oldXpos = ball_a.Xpos;
+    ball.Xspeed = 6;
+    if(rand()%2 == 0)
+        ball.Xspeed = -ball.Xspeed;
+    ball.Yspeed = 0;
+    ball.Ypos = 119;  //Starts the ball in the centre
+    ball.oldYpos = ball.Ypos;
+    ball.Xpos = 159;
+    ball.oldXpos = ball.Xpos;
 
-    playerbat_a.length = 60;
-    playerbat_a.width = 10;
-    playerbat_b.length = 60;
-    playerbat_b.width = 10;
-    playerbat_a.Xpos = 20;
-    playerbat_a.oldXpos = playerbat_a.Xpos;
-    playerbat_a.Ypos = 119;
-    playerbat_a.oldYpos = playerbat_a.Ypos;
-    playerbat_b.Xpos = 300;
-    playerbat_b.oldXpos = playerbat_b.Xpos;
-    playerbat_b.Ypos = 119;
-    playerbat_b.oldYpos = playerbat_b.Ypos;
-    playerbat_a.speed = 5;
-    playerbat_b.speed = 5;
+    playerbat[0].length = 60;
+    playerbat[0].width = 10;
+    playerbat[1].length = 60;
+    playerbat[1].width = 10;
+    playerbat[0].Xpos = 20;
+    playerbat[0].oldXpos = playerbat[0].Xpos;
+    playerbat[0].Ypos = 119;
+    playerbat[0].oldYpos = playerbat[0].Ypos;
+    playerbat[1].Xpos = 300;
+    playerbat[1].oldXpos = playerbat[1].Xpos;
+    playerbat[1].Ypos = 119;
+    playerbat[1].oldYpos = playerbat[1].Ypos;
+    playerbat[0].speed = 5;
+    playerbat[1].speed = 5;
     
     if(first){
         gamescore.playerAscore = 0;
         gamescore.playerBscore = 0;
     }
     single_color(0);//sets the playfield to black
-    draw_rectangle(playerbat_a.Xpos,playerbat_a.Ypos,playerbat_a.width,playerbat_a.length, white, false);
-    draw_rectangle(playerbat_b.Xpos,playerbat_b.Ypos,playerbat_b.width,playerbat_b.length, white, false);
+    draw_rectangle(playerbat[0].Xpos,playerbat[0].Ypos,playerbat[0].width,playerbat[0].length, white, false);
+    draw_rectangle(playerbat[1].Xpos,playerbat[1].Ypos,playerbat[1].width,playerbat[1].length, white, false);
 }
+
+
+
+// IO related functions below this line //
 
 void open_controller(){
     gamepad = fopen("/dev/gamepad", "rb");
@@ -248,23 +234,19 @@ void close_controller(){
     fclose(gamepad);
 }
 
-void close_screen() {
-    close(fb);
-}
-
 void input_handler(int singal_no){
     char buffer[30];
     while ( fgets(buffer, 30, gamepad) != NULL ) {
        if (strlen(buffer) != 7)
             break;
-        if ((buffer[2] == '2') && (buffer[5] == '1') )  input_a = 1;
-        if ((buffer[2] == '2') && (buffer[5] == '0') )  input_a = 0;
-        if ((buffer[2] == '4') && (buffer[5] == '1') )  input_a = 2;
-        if ((buffer[2] == '4') && (buffer[5] == '0') )  input_a = 0;
-        if ((buffer[2] == '6') && (buffer[5] == '1') )  input_b = 1;
-        if ((buffer[2] == '6') && (buffer[5] == '0') )  input_b = 0;
-        if ((buffer[2] == '8') && (buffer[5] == '1') )  input_b = 2;
-        if ((buffer[2] == '8') && (buffer[5] == '0') )  input_b = 0;
+        if ((buffer[2] == '2') && (buffer[5] == '1') )  input[0] = 1;
+        if ((buffer[2] == '2') && (buffer[5] == '0') )  input[0] = 0;
+        if ((buffer[2] == '4') && (buffer[5] == '1') )  input[0] = 2;
+        if ((buffer[2] == '4') && (buffer[5] == '0') )  input[0] = 0;
+        if ((buffer[2] == '6') && (buffer[5] == '1') )  input[1] = 1;
+        if ((buffer[2] == '6') && (buffer[5] == '0') )  input[1] = 0;
+        if ((buffer[2] == '8') && (buffer[5] == '1') )  input[1] = 2;
+        if ((buffer[2] == '8') && (buffer[5] == '0') )  input[1] = 0;
     }
 }
 void initialize_screen(){
@@ -290,6 +272,10 @@ void initialize_screen(){
 
     screen = (uint16_t*) mmap(NULL, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0);
     printf("Screen successfully initialized\n");
+}
+
+void close_screen() {
+    close(fb);
 }
 
 void update_screen(){
