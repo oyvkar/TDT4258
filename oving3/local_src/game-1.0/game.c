@@ -73,7 +73,7 @@ void play(){
         bat();
         moveball();
         handlePhysics();
-        nanosleep((struct timespec[]){{0, 100000000}}, NULL);
+        nanosleep((struct timespec[]){{0, 50000000}}, NULL);
     }
 }
 
@@ -102,16 +102,12 @@ void moveBat(Playerbat_t *bat, bool down) {
         return;
 
     if(down) {
-        draw_rectangle(bat->Xpos, bat->Ypos + bat->speed, bat->width, bat->speed, black);
-        draw_rectangle(bat->Xpos, bat->Ypos + bat->length + bat->speed, bat->width, bat->speed, white);
-        bat->oldYpos = bat->Ypos;
+        draw_rectangle(bat->Xpos, bat->Ypos, bat->width, bat->length, black);
+        draw_rectangle(bat->Xpos, bat->Ypos + bat->speed, bat->width, bat->length, white);
         bat->Ypos += bat->speed;
     } else {
-        printf("down: %i\n",down);
-        printf("Bat: ypos: %i\tLength: %i\tSpeed: %i\n", bat->Ypos, bat->width, bat->speed);
-        printf("ypos + len: %i\typos+len+speed %i\typos-len %i\n", bat->Ypos + bat->length, bat->Ypos + bat->length + bat->speed, bat->Ypos - bat->length);
-        draw_rectangle(bat->Xpos, bat->Ypos + bat->length + bat->speed, bat->width, 2 *  bat->speed, black);
-        draw_rectangle(bat->Xpos, bat->Ypos + 1, bat->width, bat->speed, white);
+        draw_rectangle(bat->Xpos, bat->Ypos, bat->width, bat->length, black);
+        draw_rectangle(bat->Xpos, bat->Ypos - bat->speed, bat->width, bat->length, white);
         bat->Ypos -= bat->speed;
     }
 }
@@ -300,7 +296,6 @@ void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
             screen[i+j*320] = color;
         }
     }
-    printf("DRAW: Xpos: %i\t Ypos: %i\t width: %i\t height: %i\n", Xpos, Ypos, width, height);
     struct fb_copyarea update;
     update.dx = Xpos;
     update.dy = Ypos;
