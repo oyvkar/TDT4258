@@ -101,16 +101,8 @@ static int __init gamepad_driver_init(void)
     iowrite32(0x33333333,   gpio_portc_mem + MODEL_OFFSET );
     // Set internal pullup
     iowrite32(0xff, 	gpio_portc_mem + DOUT_OFFSET);
-    // Enable interrupt on port C
-    iowrite32(0x22222222,   gpio_int_mem + EXTIPSELL_OFFSET);
-    // Enable interrupt on rising edge
-    iowrite32(0xff, gpio_int_mem + EXTIRISE_OFFSET);
-    // Enable interrupt on falling edge
-    iowrite32(0xff, gpio_int_mem + EXTIFALL_OFFSET);
-    // Enable interrupt
-    iowrite32(0xff, gpio_int_mem + IEN_OFFSET);
 
-	// Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
+    // Setup GPIO IRQ handler, 17 and 18 are odd and even interrupts
 	if(request_irq(17,(irq_handler_t) interrupt_handler, 0, "gamepad", NULL) < 0)
 	{
 		printk(KERN_ERR "GAMEPAD: IRQ 1 request FAILED, returning \n");
@@ -148,11 +140,6 @@ static void __exit gamepad_driver_cleanup(void)
 	free_irq(17,NULL);
 	free_irq(18,NULL);
 
-	//Disable GPIO interrupts
-	iowrite32(0x0, gpio_int_mem + IEN_OFFSET);
-	iowrite32(0x0, gpio_int_mem + EXTIRISE_OFFSET);
-	iowrite32(0x0, gpio_int_mem + EXTIFALL_OFFSET);
-
     // Unmap virtual memory
 	iounmap(gpio_portc_mem);
     iounmap(gpio_int_mem);
@@ -176,15 +163,25 @@ static int gp_open(struct inode *inode,struct file *file){
     if (driverOpen)
         return -EBUSY;
 
-    try_module_get(THIS_MODULE); // Prevent module unloading while in use
-    driverOpen++;                // Increment open count 
+    try_module_get(THIS_MODULE);                                // Prevent module unloading while in use
+    iowrite32(0x22222222,   gpio_int_mem + EXTIPSELL_OFFSET);   // Enable interrupt on port C
+    iowrite32(0xff, gpio_int_mem + EXTIRISE_OFFSET);            // Enable interrupt on rising edge
+    iowrite32(0xff, gpio_int_mem + EXTIFALL_OFFSET);            // Enable interrupt on falling edge
+    iowrite32(0xff, gpio_int_mem + IEN_OFFSET);                 // Enable interrupt
+    
+    driverOpen++;                                               // Increment open count 
     return SUCCESS; 
 }
 
 // Userspace program closes driver
 static int gp_release(struct inode *inode, struct file *file){
-    driverOpen--;            // Decrement open count
-    module_put(THIS_MODULE); // Allow module unloading
+
+    iowrite32(0x0, gpio_int_mem + EXTIRISE_OFFSET);     // Disable rising edge interrupts
+	iowrite32(0x0, gpio_int_mem + EXTIFALL_OFFSET);     // Disable falling edge interrupts
+	iowrite32(0x0, gpio_int_mem + IEN_OFFSET);          // Disable GPIO interrupts when not in use
+
+    driverOpen--;                                       // Decrement open count
+    module_put(THIS_MODULE);                            // Allow module unloading
     return SUCCESS; 
 }
 
