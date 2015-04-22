@@ -73,7 +73,6 @@ void play(){
         bat();
         moveball();
         handlePhysics();
-        update_screen();  // After all updates to the game have been made, update the display
     }
 }
 
@@ -102,13 +101,13 @@ void moveBat(Playerbat_t *bat, bool up) {
         return;
 
     if(up) {
-        draw_rectangle(bat->oldXpos, bat->oldYpos, bat->width, bat->speed, black, false);
-        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length, bat->width, bat->speed, white, false);
+        draw_rectangle(bat->oldXpos, bat->oldYpos, bat->width, bat->speed, black);
+        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
         bat->Ypos = bat->oldYpos + bat->speed;
     } else {
-        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length - bat->speed, bat->width, bat->speed, black, false);
-        draw_rectangle(bat->oldXpos, bat->oldYpos - bat->speed, bat->width, bat->speed, white, false);
+        draw_rectangle(bat->oldXpos, bat->oldYpos + bat->length - bat->speed, bat->width, bat->speed, black);
+        draw_rectangle(bat->oldXpos, bat->oldYpos - bat->speed, bat->width, bat->speed, white);
         bat->oldYpos = bat->Ypos;
         bat->Ypos = bat->oldYpos - bat->speed;
     }
@@ -117,7 +116,7 @@ void moveBat(Playerbat_t *bat, bool up) {
 void moveball(){
 
     //Draw a black ball to erase the current ball
-    draw_rectangle(ball.oldXpos-ball.radius, ball.oldYpos+ball.radius, ball.radius*2 + 1,ball.radius*2 + 1, black, false);
+    draw_rectangle(ball.oldXpos-ball.radius, ball.oldYpos+ball.radius, ball.radius*2 + 1,ball.radius*2 + 1, black);
 
     //Update current position
     ball.oldXpos = ball.Xpos;
@@ -127,7 +126,7 @@ void moveball(){
     ball.Ypos = ball.Ypos + ball.Yspeed;
 
     //Draw a new white ball
-    draw_rectangle(ball.oldXpos-ball.radius, ball.oldYpos+ball.radius, ball.radius*2 + 1,ball.radius*2 + 1, white,false);
+    draw_rectangle(ball.oldXpos-ball.radius, ball.oldYpos+ball.radius, ball.radius*2 + 1,ball.radius*2 + 1, white);
  
     //Handle some ball collisions
     if(ball.Ypos + ball.radius < 30)ball.Yspeed = -ball.Yspeed; //Bounces the ball from the top
@@ -200,8 +199,8 @@ void initialize(bool first)
         gamescore.playerBscore = 0;
     }
     single_color(0);//sets the playfield to black
-    draw_rectangle(playerbat[0].Xpos,playerbat[0].Ypos,playerbat[0].width,playerbat[0].length, white, false);
-    draw_rectangle(playerbat[1].Xpos,playerbat[1].Ypos,playerbat[1].width,playerbat[1].length, white, false);
+    draw_rectangle(playerbat[0].Xpos,playerbat[0].Ypos,playerbat[0].width,playerbat[0].length, white);
+    draw_rectangle(playerbat[1].Xpos,playerbat[1].Ypos,playerbat[1].width,playerbat[1].length, white);
 }
 
 
@@ -290,14 +289,18 @@ void single_color(uint16_t color){
     update_screen();
 }
 
-void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color, bool do_update){
+void draw_rectangle(int Xpos, int Ypos,int width, int height, uint16_t color){
     int i, j;
     for (i = Xpos; i < width + Xpos; i++) {
         for (j = height + Ypos; j > Ypos; j--) {
             screen[i+j*320] = color;
         }
     }
-    if (do_update) {
-        update_screen();
-    }
+
+    struct fb_copyarea update;
+    update.dx = Xpos;
+    update.dy = Ypos;
+    update.width = width;
+    update.height = height;
+    ioctl(fb,0x4680,&update);
 }
