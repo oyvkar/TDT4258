@@ -12,7 +12,7 @@
 #include <signal.h>
 #include <string.h>
 #include "game.h"
-
+/*A clone of the 80s game Pong for use on the 3750 Giant gecko development kit from Silicon labs*/
 
 //Game variables
 struct playfield{
@@ -57,7 +57,7 @@ int screen_size;
 int main(int argc, char *argv[])
 {
 	printf("Hello World, I'm game!\n");
-    open_controller();    
+    open_controller(); //Starts a connection to the char device
     initialize_screen();//Initializes the screen
     play();
     printf("Done playing \n");
@@ -67,16 +67,18 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+
+// Polling implementation, TODO: implement tickless idle, improve algorithm efficiency
 void play(){
     initialize(true);
-    while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){
-        bat();
+    while(gamescore.playerAscore < 3 && gamescore.playerBscore < 3){  //No display system for score is implemented
+        bat(); //Handle input from gamepad
         moveball();
-        handlePhysics();
+        handlePhysics(); //Detect collisions betwwen ball and wall, or ball and bat
         nanosleep((struct timespec[]){{0, 50000000}}, NULL);
     }
 }
-
+//Bats move on player input, up or down, given that they will not move beyond the boundaries of the screen
 void bat(void){
     int i;
     for(i=0; i < 2; i++) {
@@ -112,6 +114,8 @@ void moveBat(Playerbat_t *bat, bool down) {
     }
 }
 
+
+// The ball has a constant speed in the horisontal plane, this changes between negative and positive. For the vertical direction a random speed is chosen upon impact with a bat, direction is inverted upon collision with ceiling or floor
 void moveball(){
 
     //Draw a black ball to erase the current ball
@@ -131,7 +135,7 @@ void moveball(){
     if(ball.Ypos + ball.radius < 30)ball.Yspeed = -ball.Yspeed; //Bounces the ball from the top
     if(ball.Ypos - ball.radius > playfield_a.height - 30)ball.Yspeed = -ball.Yspeed; // Bounces the ball from the bottom
 }
-
+// Checks for collisions
 void handlePhysics(){
     if (ball.Xpos - ball.radius <= 30) {   //Checks if the ball hits the bat
        if ((playerbat[0].Ypos <= ball.Ypos) && (ball.Ypos <= (playerbat[0].Ypos + playerbat[0].length)))  {
@@ -159,7 +163,7 @@ void handlePhysics(){
         }   
 }
 
-
+// Resets, and handles initial game setup
 void initialize(bool first)
 {
     // Starts the game with the ball in the centre of the playfield, and the ball moving towards the player who won the previous round
@@ -205,7 +209,7 @@ void initialize(bool first)
 
 
 
-// IO related functions below this line //
+// IO related functions below this line, these are documented in the report //
 
 void open_controller(){
     gamepad = fopen("/dev/gamepad", "rb");
